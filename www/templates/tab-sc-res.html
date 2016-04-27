@@ -1,0 +1,47 @@
+<ion-view view-title="Skóring RES">
+  <ion-content>
+      <div class="item item-body">
+        <div class="list">
+  <label class="item item-input">
+    <span class="input-label">Číslo zákazníka</span>
+    <input type="text" placeholder="13-místné ID" ng-model="sc.cid" required>
+  </label>
+  <label class="item item-input">
+    <span class="input-label">Měsíční fixní příjem</span>
+    <input type="number" placeholder="Měsíční fixní příjem" ng-model="sc.tmfi"required>
+  </label>
+  <label class="item item-input">
+    <span class="input-label">Měsíční splátky</span>
+    <input type="number" placeholder="Měsíční splátky" ng-model="sc.tmvi"required>
+  </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    Credit Bureau
+                </div>
+                <select ng-model="sc.cb">ods
+
+                    <option value="a" selected>Ano</option>
+                    <option value="n">Ne</option>
+                    <option value="i">Informativní</option>
+                </select>
+            </label>
+  </div>
+</div>
+      <div class="item item-body">
+        <div class="list">
+  <label class="item item-input">
+    <span class="input-label">ID Žádosti</span>
+    <input type="text" placeholder="ID leadu" ng-model="sc.id"required>
+  </label>
+  <label class="item item-input">
+    <span class="input-label">Požadovaná půjčka</span>
+    <input type="number" placeholder="Požadovaná půjčka" ng-model="sc.req"required>
+  </label>
+  </div>
+  </div>
+      <button class="button button-block button-positive" ng-click="score(sc)">
+  Skórovat
+</button>
+      </div>
+  </ion-content>
+</ion-view>

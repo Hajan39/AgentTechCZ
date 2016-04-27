@@ -1,0 +1,73 @@
+<ion-view view-title="Dashboard">
+  <ion-content class="padding">
+  <ion-refresher
+    pulling-text="Obnovit..."
+    on-refresh="doRefresh()">
+  </ion-refresher>
+  <img src="img/logo.png" width="100%" />
+    <div class="list card">
+      <div class="item item-divider">Vítejte, {{agent.name}}</div>
+      <div class="item item-body">
+        <div>
+          Agentura <b>{{agent.agency}}</b>, na pobočce <b>{{agent.branch}}</b>.
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="list card" ng-repeat="plan in plans">
+        <div class="item item-divider">{{plan.desc}}</div>
+        <div class="item item-body">
+          <div class="row">
+            <div class="col"><b>Plán</b></div>
+            <div class="col"><b>Skutečnost</b></div>
+          </div>
+          <div class="row">
+            <div class="col" style="font-size: bigger;">{{plan.plan | number:2}}</div>
+            <div class="col" style="font-size: bigger;">{{plan.reality | number:2}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 
+    <div class="list card">
+      <div class="item item-divider">Sales</div>
+      <div class="item item-body">
+        <div class="row">
+          <div class="col"><b>Plán</b></div>
+          <div class="col"><b>Skutečnost</b></div>
+        </div>
+        <div class="row">
+          <div class="col" style="font-size: bigger;">0</div>
+          <div class="col" style="font-size: bigger;">0</div>
+        </div>
+      </div>
+    </div>
+    <div class="list card">
+      <div class="item item-divider">Coll</div>
+      <div class="item item-body">
+        <div class="row">
+          <div class="col"><b>Plán</b></div>
+          <div class="col"><b>Skutečnost</b></div>
+        </div>
+        <div class="row">
+          <div class="col" style="font-size: bigger;">0</div>
+          <div class="col" style="font-size: bigger;">0</div>
+        </div>
+      </div>
+    </div>
+    <div class="list card">
+      <div class="item item-divider">ND</div>
+      <div class="item item-body">
+        <div class="row">
+          <div class="col"><b>Plán</b></div>
+          <div class="col"><b>Skutečnost</b></div>
+        </div>
+        <div class="row">
+          <div class="col" style="font-size: bigger;">0</div>
+          <div class="col" style="font-size: bigger;">0</div>
+        </div>
+      </div>
+    </div>
+    -->
+  </ion-content>
+</ion-view>
