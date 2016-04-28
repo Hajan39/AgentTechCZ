@@ -1,22 +1,4 @@
-angular.module('starter.services', [])
-
-.factory('$localstorage_Pure', ['$window', function($window) {
-  var AesKey = 'rthOMtkxUCNjMeatPCEnJqdCw88k9W1A6Dq75kiEMVmia9dwC5ea4uKyWmJjKfd' + device.uuid;
-  return {
-    set: function(key, value) {
-      window.localStorage[key] = CryptoJS.AES.encrypt(value, AesKey);
-    },
-    get: function(key, defaultValue) {
-      return CryptoJS.AES.decrypt(window.localStorage[key], AesKey) || defaultValue;
-    },
-    setObject: function(key, value) {
-      window.localStorage[key] = CryptoJS.AES.encrypt(JSON.stringify(value), AesKey);
-    },
-    getObject: function(key) {
-      return JSON.parse(CryptoJS.AES.decrypt(window.localStorage[key], AesKey) || '{}');
-    }
-  }
-}])
+angular.module('starter.services', ['ionic', 'ngCordova'])
 
 .factory('$localstorage', ['$window', function($window) {
   return {
@@ -24,7 +6,7 @@ angular.module('starter.services', [])
       window.localStorage[key] = value;
     },
     get: function(key, defaultValue) {
-      returnwindow.localStorage[key]  || defaultValue;
+      return window.localStorage[key]  || defaultValue;
     },
     setObject: function(key, value) {
       window.localStorage[key] = JSON.stringify(value);
@@ -35,7 +17,7 @@ angular.module('starter.services', [])
   }
 }])
 
-.factory('Provident', function ($localstorage, $state) {
+.factory('Provident', function ($localstorage, $state, $ionicPopup, $cordovaGoogleAnalytics) {
   var isAuthorized = false;
   var getFirstChild = function (n) {
     x=n.firstChild;
@@ -50,9 +32,11 @@ angular.module('starter.services', [])
     isAuthorized: function () {
       return isAuthorized;
     },
+    logout: function () {
+      $localstorage.setObject('user', {auth: false});
+    },
     verifyAuth: function (uuid, success, error) {
       $localstorage.setObject('user', {auth: false});
-      //alert(uuid);
       $.ajax({
         url: 'https://ows.provident.cz:43008/CZProductTableWs/ProductTableWebService.asmx',
         data: '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+
@@ -65,9 +49,7 @@ angular.module('starter.services', [])
         headers: {'SOAPAction': 'http://tempuri.org/AuthorizationRequest'},
         method: 'POST',
         success: function (data, status, xhr) {
-          //alert(getFirstChild(data.documentElement).textContent);
           data = JSON.parse(getFirstChild(data.documentElement).textContent);
-          alert(data.response);
           switch (data.response) {
             case 0:
               $localstorage.setObject('user', {auth: true});
@@ -85,21 +67,23 @@ angular.module('starter.services', [])
         dataType: 'xml',
         contentType: 'text/xml; charset="utf-8"',
         error: function (msg) {
-          alert('error');
-          error('Chyba síťové komunikace - jste připojeni k internetu?');
-          //error("Failed: " + msg.status + ': ' + msg.statusText);
+          error("Failed: " + msg.status + ': ' + msg.statusText);
         },
         timeout: 3000
       });
     },
-    agentInfo: function (uuid, success, onlyOffline = false) {
-      if ($localstorage.getObject('agentInfo') == {}) {
+    agentInfo: function (uuid, success, onlyOffline) {
+      if (onlyOffline === undefined) onlyOffline = false;
+      
+      if ($localstorage.getObject('agentInfo') == {} || $localstorage.getObject('agentInfo') === undefined) {
         $localstorage.setObject('agentInfo', {
           name: 'nahrávání',
           agency: '0',
           branch: '-',
           sid: ''
         });
+      } else {
+        $cordovaGoogleAnalytics.setUserId($localstorage.getObject('agentInfo').agency);
       }
 
       if (!onlyOffline) {
@@ -131,13 +115,13 @@ angular.module('starter.services', [])
                 sid: data.data.branch + ";" + data.data.section + ";" + agency
               };
               $localstorage.setObject('agentInfo', newData);
-              //window.analytics.setUserId(newData.agency);
+              $cordovaGoogleAnalytics.setUserId(newData.agency);
               success(newData);
             }
           }
         });
       }
-      //window.analytics.setUserId($localstorage.getObject('agentInfo').agency);
+      
       success($localstorage.getObject('agentInfo'));
     },
     getUuid: function () {
@@ -164,7 +148,8 @@ angular.module('starter.services', [])
       });
 
     },
-    agentPlans: function (uuid, success, onlyOffline = false) {
+    agentPlans: function (uuid, success, onlyOffline) {
+      if (onlyOffline === undefined) onlyOffline = false;
       if ($localstorage.getObject('agentPlans') == {}) {
         $localstorage.setObject('agentPlans', []);
       }
@@ -189,8 +174,14 @@ angular.module('starter.services', [])
           success: function (data) {
             data = JSON.parse(getFirstChild(data.documentElement).textContent);
             if (data.result == 0) {
+              if (data.data[0] !== undefined || data.data[0].thisMonth !== undefined) {
+                data.month = data.data[0].thisMonth.toString();
+                data.month = ' (' + data.month.substring(0, 4) + '/' + data.month.substring(4) + ')';
+              } else {
+                data.month = '';
+              }
               $localstorage.setObject('agentPlans', data.data);
-              success(data.data);
+              success(data);
             }
           }
         });
@@ -199,51 +190,4 @@ angular.module('starter.services', [])
       success($localstorage.getObject('agentPlans'));
     }
   };
-})
-
-/**
- * A simple example service that returns some data.
- */
-.factory('Friends', function() {
-  // Might use a resource here that returns a JSON array
-
-  // Some fake testing data
-  // Some fake testing data
-  var friends = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    notes: 'Enjoys drawing things',
-    face: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    notes: 'Odd obsession with everything',
-    face: 'https://avatars3.githubusercontent.com/u/11214?v=3&s=460'
-  }, {
-    id: 2,
-    name: 'Andrew Jostlen',
-    notes: 'Wears a sweet leather Jacket. I\'m a bit jealous',
-    face: 'https://pbs.twimg.com/profile_images/491274378181488640/Tti0fFVJ.jpeg'
-  }, {
-    id: 3,
-    name: 'Adam Bradleyson',
-    notes: 'I think he needs to buy a boat',
-    face: 'https://pbs.twimg.com/profile_images/479090794058379264/84TKj_qa.jpeg'
-  }, {
-    id: 4,
-    name: 'Perry Governor',
-    notes: 'Just the nicest guy',
-    face: 'https://pbs.twimg.com/profile_images/491995398135767040/ie2Z_V6e.jpeg'
-  }];
-
-
-  return {
-    all: function() {
-      return friends;
-    },
-    get: function(friendId) {
-      // Simple index lookup
-      return friends[friendId];
-    }
-  }
 });

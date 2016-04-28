@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope, Provident) {
+.controller('DashCtrl', function($scope, Provident, $ionicPopup, $ionicHistory, $state) {
   $scope.doRefresh = function() {
       Provident.agentInfo(device.uuid, function (data) {
         $scope.agent = data;
@@ -8,88 +8,47 @@ angular.module('starter.controllers', [])
         $scope.$broadcast('scroll.refreshComplete');
       });
       Provident.agentPlans(device.uuid, function (data) {
-        $scope.plans = data;
+        $scope.plans = data.data;
+        $scope.month = data.month;
         $scope.$apply();
         $scope.$broadcast('scroll.refreshComplete');
-      });/*
-      $scope.plans = [
-        {
-          description: 'Prodeje',
-          planValue: 50000,
-          actualValue: 55000
-        },
-        {
-          description: 'Výběry',
-          planValue: 40000,
-          actualValue: 55000
-        },
-        {
-          description: 'NC',
-          planValue: 2,
-          actualValue: 1
-        }
-      ];
-      $scope.agent = {
-        name: 'Vojtěch Zicha',
-        agency: '6-1125',
-        branch: 'Ostrava'
-      };*/
+      });
+  };
+  $scope.doLogout = function() {
+    $ionicPopup.confirm({
+      title: 'Odhlášení',
+      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit?'
+    }).then(function (res) {
+      if (res) {
+        Provident.logout();
+        $ionicHistory.nextViewOptions({
+          disableBack: true
+        });
+        $state.go('login');
+      }
+    });
   };
   
   Provident.agentInfo(device.uuid, function (data) {
     $scope.agent = data;
-      $scope.$apply();
   }, true);
   Provident.agentPlans(device.uuid, function (data) {
-    $scope.plans = data;
-      $scope.$apply();
+    $scope.plans = data.data;
+    $scope.month = data.month;
   }, true);
   
   setTimeout($scope.doRefresh, 3000);
 })
 
-.controller('ChatsCtrl', function($scope, $ionicLoading, $state) {
-  $scope.score = function (data) {
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá odeslání SMS',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
-    var text = "rc" + data.pin.toString() +
-      ",op" + data.op.toString()
-      + "," + (data.phone ? "mt" : "nt")
-      + "," + (data.emp.substring(0, 2) === "mz" ? "mz" : "nz")
-      + ",p" + data.loan.toString()
-      + ",id" + (data.id == undefined ? "000" : data.id.toString())
-      + ",t:" + data.phonen
-      + ",m:" + data.name
-      + ",p:" + data.surname;
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá přihlašování (může trvat až 2 minuty)',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
-    sms.sendMessage({phoneNumber: '+420606999008', textMessage: text}, function(message) {
-      alert('Skóring odeslán!');
-      $scope.loading.hide();
-      $state.go('tab.dash', {}, {location: 'replace'});
-    }, function (error) {
-      alert('Nepodařilo se odeslat SMS.');
-      $scope.loading.hide();
-    });
+.filter('agencyId', function() {
+  return function(id) {
+    return typeof id === 'string' ? id.replace('00000', '-') : id;
   }
 })
 
-.controller('ScNcCtrl', function($scope, $ionicLoading, $state) {
+.controller('ScNcCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.score = function (data) {
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá odeslání SMS',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
+    $ionicLoading.show();
     var text = 'rc' + data.pin.toString() +
       '#' + data.firstName +
       '#' + data.lastName +
@@ -104,23 +63,26 @@ angular.module('starter.controllers', [])
       '#' + data.liv + 
       '#' + (data.car ? "A" : "N") + 
       '#' + data.chi + 
-      (data.id === null ? '' : '#' + data.id.toString()) +
-      (data.req === null ? '' : '#p' + data.req.toString())
+      (data.id === null || data.id === undefined ? '' : '#' + data.id.toString()) +
+      (data.req === null || data.req === undefined ? '' : '#p' + data.req.toString())
     ;
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá přihlašování (může trvat až 2 minuty)',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
-    sms.sendMessage({phoneNumber: '+420606999008', textMessage: text}, function(message) {
-      alert('Skóring odeslán!');
-      $scope.loading.hide();
-      $state.go('tab.dash', {}, {location: 'replace'});
-    }, function (error) {
-      alert('Nepodařilo se odeslat SMS.');
-      $scope.loading.hide();
-    });
+    
+    $cordovaSms.send('+420606999008', text)
+      .then(function() {
+        $ionicLoading.hide();
+        $cordovaGoogleAnalytics.trackEvent('SMS', 'Scoring-NC');
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Skóring odeslán.<br><small>Odpověď vám přijde v SMS zprávě.</small>'
+        });
+        $state.go('tab.dash');
+      }, function() {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
+        });
+      });
   };
   $scope.sc = {
     req: null,
@@ -133,14 +95,9 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('ScResCtrl', function($scope, $ionicLoading, $state) {
+.controller('ScResCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.score = function (data) {
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá odeslání SMS',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
+    $ionicLoading.show();
     var text = data.cid.toString() + 
       '#' + data.tmfi.toString() +
       '#' + data.tmvi.toString() +
@@ -148,20 +105,23 @@ angular.module('starter.controllers', [])
       (data.id === null ? '' : '#' + data.id.toString()) +
       (data.req === null ? '' : '#p' + data.req.toString())
     ;
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá přihlašování (může trvat až 2 minuty)',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
-    sms.sendMessage({phoneNumber: '+420606999008', textMessage: text}, function(message) {
-      alert('Skóring odeslán!');
-      $scope.loading.hide();
-      $state.go('tab.dash', {}, {location: 'replace'});
-    }, function (error) {
-      alert('Nepodařilo se odeslat SMS.');
-      $scope.loading.hide();
-    });
+    
+    $cordovaSms.send('+420606999008', text)
+      .then(function() {
+        $ionicLoading.hide();
+        $cordovaGoogleAnalytics.trackEvent('SMS', 'Scoring-RES');
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Skóring odeslán.<br><small>Odpověď vám přijde v SMS zprávě.</small>'
+        });
+        $state.go('tab.dash');
+      }, function() {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
+        });
+      });
   };
   $scope.sc = {
     req: null,
@@ -170,43 +130,37 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PtpCtrl', function($scope, $ionicLoading, $state) {
+.controller('PtpCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.ptp = function (data) {
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá odeslání SMS',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
+    $ionicLoading.show();
     var text = "#DO#" + data.cid.toString() +
       "#" + data.fr.toString() + '#' +
       data.pay.toString() + '#' + moment(data.end).format('DDMMYYYY') + '#'
       ;
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá přihlašování (může trvat až 2 minuty)',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
-    sms.sendMessage({phoneNumber: '+420606999008', textMessage: text}, function(message) {
-      alert('PTP odesláno!');
-      $scope.loading.hide();
-      $state.go('tab.dash', {}, {location: 'replace'});
-    }, function (error) {
-      alert('Nepodařilo se odeslat SMS.');
-      $scope.loading.hide();
-    });
+    
+    $cordovaSms.send('+420606999008', text)
+      .then(function() {
+        $ionicLoading.hide();
+        $cordovaGoogleAnalytics.trackEvent('SMS', 'PTP');
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Dohoda vytvořena.'
+        });
+        $state.go('tab.dash');
+      }, function() {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
+        });
+      });
   };
   $scope.sc = {
     fr: 'J'
   };
 })
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
-})
-
-.controller('AgCtrl', function($state, $scope, Provident) {
+.controller('AgCtrl', function($state, $scope, Provident, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.product = {
     term: 'WE-45',
     type: 'HC',
@@ -216,14 +170,20 @@ angular.module('starter.controllers', [])
   $scope.showIssue = function (product) {
     var data = Provident.productValidIssues;
     if (data[product.term] == undefined || data[product.term][product.type] == undefined || data[product.term][product.type][product.discount] == undefined) {
-      alert('Nesprávná kombinace parametrů');
+      $ionicPopup.alert({
+        title: 'SMS',
+        template: 'Nesprávná kombinace parametrů.<br><small>Takovýto produkt nemáme v nabídce.</small>'
+      });
       return;
     }
 
     var row = data[product.term][product.type][product.discount];
 
     if ($.inArray(product.issue, row) == -1) {
-      alert('Nesprávná výše půjčky');
+      $ionicPopup.alert({
+        title: 'SMS',
+        template: 'Nesprávná kombinace parametrů.<br><small>Výše půjčky není k dispozici pro tento produkt.</small>'
+      });
       return;
     }
 
@@ -237,7 +197,10 @@ angular.module('starter.controllers', [])
   $scope.showSummary = function (product) {
     var data = Provident.productValidIssues;
     if (data[product.term] == undefined || data[product.term][product.type] == undefined || data[product.term][product.type][product.discount] == undefined) {
-      alert('Nesprávná kombinace parametrů');
+      $ionicPopup.alert({
+        title: 'SMS',
+        template: 'Nesprávná kombinace parametrů.<br><small>Takovýto produkt nemáme v nabídce.</small>'
+      });
       return;
     }
 
@@ -249,7 +212,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('Product1Ctrl', function($stateParams, $state, $scope, Provident) {
+.controller('Product1Ctrl', function($stateParams, $state, $scope, Provident, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.d = Provident.productData[$stateParams.term][$stateParams.type][$stateParams.discount][$stateParams.issue];
   var termCount = $stateParams.term;
   $scope.d.Term = termCount.substring(termCount.indexOf('-') + 1);
@@ -260,7 +223,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('ProductTableCtrl', function($stateParams, $state, $scope, Provident) {
+.controller('ProductTableCtrl', function($stateParams, $state, $scope, Provident, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   var data = Provident.productValidIssues;
   var termCount = $stateParams.term;
   $scope.gl = {
@@ -282,7 +245,6 @@ angular.module('starter.controllers', [])
   console.log($scope.table);
 
   $scope.issue = function (issue, type) {
-    //alert('Issue: ' + issue + '')
     $state.go('tab.product1', {
       discount: $stateParams.discount,
       type: type,
@@ -292,17 +254,15 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('FriendsCtrl', function($scope, $ionicLoading, $state) {
+.controller('FriendsCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.sale = {
-    date: new Date()
+    date: new Date(),
+    term: '45',
+    type: 'HC'
   };
   $scope.issue = function (data) {
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá odeslání SMS',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
+    $ionicLoading.show();
+    
     var month = data.date.getMonth() + 1;
     var year = data.date.getFullYear();
     if (month == 13) {
@@ -314,78 +274,93 @@ angular.module('starter.controllers', [])
       + ";v" + data.issue.toString()
       + ";s" + data.term.toString()
       + ";t" + (data.type == "MT" ? "B" : "H");
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá přihlašování (může trvat až 2 minuty)',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
-    sms.sendMessage({phoneNumber: '+420606999008', textMessage: text}, function(message) {
-      alert('Prodejní SMS odeslána!');
-      $scope.loading.hide();
-      $state.go('tab.dash', {}, {location: 'replace'});
-    }, function (error) {
-      alert('Nepodařilo se odeslat SMS.');
-      $scope.loading.hide();
-    });
+    
+    $cordovaSms.send('+420606999008', text)
+      .then(function() {
+        $ionicLoading.hide();
+        $cordovaGoogleAnalytics.trackEvent('SMS', 'Sales');
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Prodejní SMS odeslána.<br><small>Dobrá práce!</small>'
+        });
+        $state.go('tab.dash');
+      }, function() {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
+        });
+      });
   }
 })
 
-.controller('FriendDetailCtrl', function($scope, $stateParams, Friends) {
-  $scope.friend = Friends.get($stateParams.friendId);
-})
-
-.controller('LoginCtrl', function($scope, $state, Provident, $ionicLoading, $localstorage, $ionicViewService, $location) {
+.controller('LoginCtrl', function($scope, $state, Provident, $ionicLoading, $localstorage, $ionicHistory, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.lg = {
     id: '',
     branch: ''
   };
   $scope.update = function(data) {
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá přihlašování (může trvat až 2 minuty)',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
+    $ionicLoading.show({
+      template: '<div><div><ion-spinner icon="ripple" class="spinner-energized" style="width: 128px; height: 128px"></div><div>Probíhá přihlašování (může trvat až 2 minuty)</div></div>'
     });
     //window.device = {uuid: Provident.getUuid()};
     var ridb = "000000000" + data.id.toString();
     var rid = (data.branch.toString() == '6' ? '0006' : data.branch.toString()) + ridb.substring(ridb.length - 9, ridb.length);
     var text = "#ACAT;" + rid + ";" + device.uuid + ";";
-    sms.sendMessage({phoneNumber: '+420606999008', textMessage: text}, function(message) {
-      //alert('sent');
-      var checker = function (i, checker) {
-      //alert('check');
-        Provident.verifyAuth(device.uuid, function () {
-          //alert('loading');
-          $scope.loading.hide();
-          //alert('loading 2');
-          $ionicViewService.nextViewOptions({
-            disableBack: true
+      
+      $cordovaSms.send('+420606999008', text).then(function() {
+        var checker = function (i, checker) {
+          Provident.verifyAuth(device.uuid, function () {
+            $ionicLoading.hide();
+            $cordovaGoogleAnalytics.trackEvent('Login', 'Success');
+            $ionicHistory.nextViewOptions({
+              disableBack: true
+            });
+            $scope.lg = {
+              id: '',
+              branch: ''
+            };
+            $state.go('tab.dash');
+          }, function (msg) {
+            i += 1;
+            if (msg == null && i >= 3) {
+              $ionicLoading.hide();
+              $cordovaGoogleAnalytics.trackEvent('Login', 'Invalid-WrongRepreId');
+              $ionicPopup.alert({
+                title: 'Upozornění',
+                template: 'Přihlášení bylo neúspěšné.<br><small>Aplikace OZ Cockpit je dostupná pouze pro obchodní zástupce s právem odeslat scoring. V případě potíží kontaktuje IT helpdesk (ID <code>'+device.uuid+'</code>).</small>'
+              });
+            } else if (msg != null) {
+              $ionicLoadinghide();
+              $cordovaGoogleAnalytics.trackEvent('Login', 'Invalid-ServerError');
+              $ionicPopup.alert({
+                title: 'Upozornění',
+                template: 'Přihlášení bylo neúspěšné.<br><small>Zkontrolujte své připojení k internetu. V případě potíží kontaktuje IT helpdesk (ID <code>'+device.uuid+'</code>, chyba: <code>'+msg+'</code>).</small>'
+              });
+            } else {
+              window.setTimeout(checker, 3000, i, checker);
+            }
+          }, function (error) {
+              $cordovaGoogleAnalytics.trackEvent('Login', 'Invalid-Error');
+              $ionicPopup.alert({
+                title: 'Chyba',
+                template: 'Přihlášení bylo neúspěšné.<br><small>Zkontrolujte své připojení k internetu. V případě potíží kontaktuje IT helpdesk (ID <code>'+device.uuid+'</code>).</small>'
+              });
           });
-          $state.go('tab.dash');
-          //alert('loading 3');
-        }, function (msg) {
-          i += 1;
-          if (msg == null && i < 10) {
-            window.setTimeout(checker, 20000, i, checker);
-          } else if (msg == null && i >= 10) {
-          $scope.loading.hide();
-            alert('Přihlášení bylo neúspěšné (zkontrolujte připojení k internetu, příp. kontaktujte IT helpdesk.)');
-          } else if (msg != null) {
-            $scope.loading.hide();
-            alert(msg);
-          }
-        });
-      };
+        };
+      
         window.setTimeout(checker, 3000, 1, checker);
-        return false;
-    }, function (error) {
-      alert('Nepodařilo se odeslat SMS zprávu, prosím zkuste znovu.');
-    });
+      }, function (error) {
+              $cordovaGoogleAnalytics.trackEvent('Login', 'Invalid-Error');
+          $ionicPopup.alert({
+            title: 'Chyba',
+            template: 'Přihlášení bylo neúspěšné.<br><small>V případě potíží kontaktuje IT helpdesk (ID <code>'+device.uuid+'</code>).</small>'
+          });
+      });
   };
 })
 
-.controller('AccountCtrl', function($scope, $state, $ionicLoading, $localstorage) {
+.controller('AccountCtrl', function($scope, $state, $ionicLoading, $localstorage, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.sc = {
     nc: null,
     obn: null,
@@ -420,16 +395,14 @@ angular.module('starter.controllers', [])
 
   $scope.report = function (data) {
     if (data.nc === null || data.obn === null || data.sub === null || data.ref === null || data.pu === null || data.sal === null || data.coll === null || data.vz === null) {
-      alert('Nevyplněná povinná data.');
+      $ionicPopup.alert({
+            title: 'SMS',
+            template: 'Nebyly vyplněny povinné položky.<br><small>Prvních osm parametrů je nutno vyplnit pro odeslání výsledků.</small>'
+          });
       return;
     }
-
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá odeslání SMS',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
+    
+    $ionicLoading.show();
 
     var text = "#ROZ" +
       ';' + $localstorage.getObject('agentInfo').sid +
@@ -473,23 +446,22 @@ angular.module('starter.controllers', [])
     if (data.pNC != 0 || data.pSA != 0 || data.pCO != 0) {
         text += data.pNC + '/' + data.pSA + '/' + data.pCO + ' PRED;';
     }
-
-    $scope.loading = $ionicLoading.show({
-      content: 'Probíhá přihlašování (může trvat až 2 minuty)',
-      animation: 'fade-in',
-      showDelay: 500,
-      showBackdrop: true
-    });
-    sms.sendMessage({phoneNumber: '+420606999008', textMessage: text}, function(message) {
-      alert('Reportovací SMS odeslána!');
-      $scope.loading.hide();
-      $state.go('tab.dash', {}, {location: 'replace'});
-    }, function (error) {
-      alert('Nepodařilo se odeslat SMS.');
-      $scope.loading.hide();
-    });
+    
+    $cordovaSms.send('+420606999008', text)
+      .then(function() {
+        $ionicLoading.hide();
+        $cordovaGoogleAnalytics.trackEvent('SMS', 'ROZ');
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Výsledky odeslány'
+        });
+        $state.go('tab.dash');
+      }, function() {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
+        });
+      });
   }
 });
-
-// 30c468e6f382845b
-// 30c468e6f382845b

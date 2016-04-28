@@ -19,7 +19,11 @@
     "https://github.com/danwilson/google-analytics-plugin.git",
     "cordova-plugin-device",
     "cordova-plugin-whitelist",
-    "cordova-plugin-google-analytics@0.7.1"
+    "cordova-plugin-google-analytics@0.7.1",
+    "ionic-plugin-keyboard",
+    "https://github.com/cordova-sms/cordova-sms-plugin.git"
   ],
-  "cordovaPlatforms": []
+  "cordovaPlatforms": [
+    "ios"
+  ]
 }
