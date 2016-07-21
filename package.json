@@ -24,6 +24,7 @@
     "https://github.com/cordova-sms/cordova-sms-plugin.git"
   ],
   "cordovaPlatforms": [
-    "ios"
+    "ios",
+    "android"
   ]
 }

@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://ows.provident.cz:43008 https://ows.provident.cz https://push.ionic.io data: gap: maps.googleapis.com maps.gstatic.com https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *;script-src 'self' 'unsafe-eval' 'unsafe-inline';">
-    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://ows.provident.cz:43008 https://ows.provident.cz https://push.ionic.io https://codepush.azurewebsites.net data: gap: maps.googleapis.com maps.gstatic.com https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *;script-src 'self' 'unsafe-eval' 'unsafe-inline';">
+
     <title></title>
 
-    <link href="lib/ionic_old/css/ionic.css" rel="stylesheet">
-    <!-- <link href="lib/Ionicons/css/ionicons.min.css" rel="stylesheet"> -->
+    <link href="lib/ionic/release/css/ionic.min.css" rel="stylesheet">
+    <link href="lib/Ionicons/css/ionicons.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
     <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
@@ -27,7 +27,7 @@
 
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
-    
+
     <!-- bower libraries -->
     <script src="js/jquery.js"></script>
     <script>$.support.cors=true;</script>
@@ -38,11 +38,11 @@
     <script src="js/controllers.js"></script>
     <script src="js/services.js"></script>
   </head>
-  <body ng-app="starter">
+  <body ng-app="starter" class="platform-android platform-cordova platform-webview">
     <!--
       The nav bar that will be updated as we navigate between views.
     -->
-    <ion-nav-bar class="bar-stable">
+    <ion-nav-bar class="bar-dark">
       <ion-nav-back-button>
       </ion-nav-back-button>
     </ion-nav-bar>

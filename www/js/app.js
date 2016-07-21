@@ -12,7 +12,28 @@ if (window.analytics === undefined) {
   window.analytics = {trackView: function(view) { console.log('track', view); }, startTrackerWithId: function(id){}};
 }
 
+if (!Array.prototype.reduce) {
+    Array.prototype.reduce = function(callbackfn, initVal) {
+        "use strict";
+        var arr = this,
+            arrLen = arr.length,
+            k = 0,
+            accumulator = initVal === undefined ? undefined : initVal;
+
+        for(;k < arrLen;k++) {
+            if (accumulator !== undefined && k in arr) {
+                accumulator = callbackfn.call(undefined, accumulator, arr[k], k, arr);
+            } else {
+                accumulator = arr[k];
+            }
+        }
+        return accumulator;
+    };
+}
+
 //device = {uuid: 'abcvd'};
+
+[].map||(Array.prototype.map=function(a){for(var b=this,c=b.length,d=[],e=0,f;e<b;)d[e]=e in b?a.call(arguments[1],b[e],e++,b):f;return d});
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
@@ -21,9 +42,9 @@ if (window.analytics === undefined) {
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova'])
 
-.run(function($ionicPlatform, $rootScope, $state, $localstorage, Provident, $cordovaGoogleAnalytics) {
+.run(function($ionicPlatform, $rootScope, $state, $localstorage, Provident, $cordovaGoogleAnalytics, $ionicHistory) {
   $ionicPlatform.ready(function() {
-    
+
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins.Keyboard) {
@@ -34,15 +55,60 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       StatusBar.styleDefault();
     }
 
+    $ionicPlatform.registerBackButtonAction(function(e) {
+      if ($rootScope.backButtonPressedOnceToExit) {
+        navigator.app.exitApp();
+      } else if ($ionicHistory.backView()) {
+        $ionicHistory.goBack();
+      } else {
+        $rootScope.backButtonPressedOnceToExit = true;
+        window.plugins.toast.showShortBottom('Klikněte zpět znovu pro vypnutí aplikace', function(a) { }, function(b) { });
+        setTimeout(function() {
+          $rootScope.backButtonPressedOnceToExit = false;
+        }, 2000);
+      }
+      e.preventDefault();
+      return false;
+    }, 101);
+
     //Provident.getUuid();
+
+    if ($localstorage.getObject('comm') == {}) {
+      $localstorage.setObject('comm', {
+        weekId: 0,
+        amount: 0
+      });
+    }
 
     // Google Analytics
     $cordovaGoogleAnalytics.startTrackerWithId('UA-61689828-1');
-    window.analytics.enableUncaughtExceptionReporting(true);
+    if (window.analytics.enableUncaughtExceptionReporting !== undefined)
+      window.analytics.enableUncaughtExceptionReporting(true);
 
-    /*$ionicPlatform.registerBackButtonAction(function (event) {
-      event.preventDefault();
-    }, 100);*/
+    var getLastTuesday = function(date, keyDay, keyHour) {
+      if (keyDay === undefined) keyDay = 2;
+      if (keyHour === undefined) keyHour = 17;
+      date.setMinutes(0);
+      date.setSeconds(0);
+      while (date.getHours() != keyHour) {
+        date.setHours(date.getHours() - 1);
+      }
+      while (date.getDay() != keyDay) {
+        date = new Date(date - 1000*60*60*24);
+      }
+      return date;
+    };
+
+    if ($localstorage.getObject('resDataUpdate') != {}) {
+      var update = $localstorage.getObject('resDataUpdate').timestamp;
+      var concreteData = new Date();
+      var lastTuesday = getLastTuesday(concreteData);
+
+      if (update < lastTuesday) {
+        $localstorage.setObject('resData', {});
+        $localstorage.setObject('resDataUpdate', {timestamp: concreteData});
+      }
+    }
 
     var switchToLogin = function(endState, e) {
       if (endState == 'login') {

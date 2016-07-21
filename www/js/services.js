@@ -17,7 +17,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
   }
 }])
 
-.factory('Provident', function ($localstorage, $state, $ionicPopup, $cordovaGoogleAnalytics) {
+.factory('Provident', function ($localstorage, $state, $ionicPopup, $cordovaGoogleAnalytics, $cordovaLocalNotification) {
   var isAuthorized = false;
   var getFirstChild = function (n) {
     x=n.firstChild;
@@ -74,7 +74,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
     },
     agentInfo: function (uuid, success, onlyOffline) {
       if (onlyOffline === undefined) onlyOffline = false;
-      
+
       if ($localstorage.getObject('agentInfo') == {} || $localstorage.getObject('agentInfo') === undefined) {
         $localstorage.setObject('agentInfo', {
           name: 'nahrávání',
@@ -121,7 +121,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
           }
         });
       }
-      
+
       success($localstorage.getObject('agentInfo'));
     },
     getUuid: function () {
@@ -147,6 +147,69 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
         }
       });
 
+    },
+    commGetSummary: function (uuid, success) {
+      if ($localstorage.getObject('commSummary') == {}) {
+        $localstorage.setObject('commSummary', {});
+      }
+
+      $.ajax({
+        method: 'POST',
+        dataType: 'xml',
+        headers: {
+          'SOAPAction': 'http://tempuri.org/CommissionsGetSummary',
+          'Content-Type': 'text/xml'
+        },
+        url: 'https://ows.provident.cz:43008/CZProductTableWs/ProductTableWebService.asmx',
+        data: '<?xml version="1.0" encoding="utf-8"?>'+
+                    '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+
+                      '<soap:Body>'+
+                        '<CommissionsGetSummary xmlns="http://tempuri.org/">'+
+                          '<uid>' + uuid + '</uid>'+
+                        '</CommissionsGetSummary>'+
+                      '</soap:Body>'+
+                    '</soap:Envelope>',
+        success: function (data) {
+          data = JSON.parse(getFirstChild(data.documentElement).textContent).data;
+          var thenWeek = $localstorage.getObject('comm').weekId;
+          if (thenWeek == undefined || thenWeek == null || thenWeek < 2000) thenWeek = 0;
+          var nowWeek = data.weekId;
+          console.log(thenWeek, nowWeek);
+          if (thenWeek < nowWeek) {
+            $cordovaLocalNotification.schedule({
+              id: nowWeek,
+              title: 'Provize na týden ' + nowWeek,
+              text: 'Celková provize: ' + data.amount + ' Kč'
+            });
+          }
+          $localstorage.setObject('comm', data);
+          success(data);
+        }
+      });
+    },
+    commGetDetail: function (uuid, week, success) {
+      $.ajax({
+        method: 'POST',
+        dataType: 'xml',
+        headers: {
+          'SOAPAction': 'http://tempuri.org/CommissionsGetDetail',
+          'Content-Type': 'text/xml'
+        },
+        url: 'https://ows.provident.cz:43008/CZProductTableWs/ProductTableWebService.asmx',
+        data: '<?xml version="1.0" encoding="utf-8"?>'+
+                    '<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'+
+                      '<soap:Body>'+
+                        '<CommissionsGetDetail xmlns="http://tempuri.org/">'+
+                          '<uid>' + uuid + '</uid>'+
+                          '<weekId>' + week + '</weekId>'+
+                        '</CommissionsGetDetail>'+
+                      '</soap:Body>'+
+                    '</soap:Envelope>',
+        success: function (data) {
+          data = JSON.parse(getFirstChild(data.documentElement).textContent);
+          success(data.data);
+        }
+      });
     },
     agentPlans: function (uuid, success, onlyOffline) {
       if (onlyOffline === undefined) onlyOffline = false;
@@ -180,7 +243,7 @@ angular.module('starter.services', ['ionic', 'ngCordova'])
               } else {
                 data.month = '';
               }
-              $localstorage.setObject('agentPlans', data.data);
+              $localstorage.setObject('agentPlans', data);
               success(data);
             }
           }
