@@ -21,7 +21,8 @@
     "cordova-plugin-whitelist",
     "cordova-plugin-google-analytics@0.7.1",
     "ionic-plugin-keyboard",
-    "https://github.com/cordova-sms/cordova-sms-plugin.git"
+    "https://github.com/cordova-sms/cordova-sms-plugin.git",
+    "cordova-plugin-sim"
   ],
   "cordovaPlatforms": [
     "ios",

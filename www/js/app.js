@@ -9,7 +9,11 @@ code.google.com/p/crypto-js
 code.google.com/p/crypto-js/wiki/License
 */
 if (window.analytics === undefined) {
-  window.analytics = {trackView: function(view) { console.log('track', view); }, startTrackerWithId: function(id){}};
+  window.analytics = {trackView: function(view) { console.log('track', view); }, startTrackerWithId: function(id){}, setUserId: function(id,id) {}};
+}
+
+if (window.device === undefined) {
+  window.device = {uuid: ''};
 }
 
 if (!Array.prototype.reduce) {
@@ -35,14 +39,17 @@ if (!Array.prototype.reduce) {
 
 [].map||(Array.prototype.map=function(a){for(var b=this,c=b.length,d=[],e=0,f;e<b;)d[e]=e in b?a.call(arguments[1],b[e],e++,b):f;return d});
 
+angular.module('cockpit.services', ['ionic', 'ngCordova']);
+angular.module('cockpit.controllers', ['ionic', 'ngCordova', 'cockpit.services']);
+
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova', 'cockpit.services', 'cockpit.controllers'])
 
-.run(function($ionicPlatform, $rootScope, $state, $localstorage, Provident, $cordovaGoogleAnalytics, $ionicHistory) {
+.run(function($ionicPlatform, $rootScope, $state, $localstorage, $cordovaGoogleAnalytics, $ionicHistory, UserData) {
   $ionicPlatform.ready(function() {
 
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -114,6 +121,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       if (endState == 'login') {
         return true;
       }
+/*
+      if
 
       var user = $localstorage.getObject('user');
       console.log(user, endState);
@@ -129,6 +138,17 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
         if (e != undefined) e.preventDefault();
         $state.go('login', {location: 'replace'});
         console.log('teď by byl login');
+        return false;
+      } else {
+        return true;
+      }
+      */
+
+      var hasLoggedIn = UserData.hasLoggedIn();
+
+      if (!hasLoggedIn) {
+        if (e !== undefined) e.preventDefault();
+        $state.go('login', {location: 'replace'});
         return false;
       } else {
         return true;

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://ows.provident.cz:43008 https://ows.provident.cz https://push.ionic.io https://codepush.azurewebsites.net data: gap: maps.googleapis.com maps.gstatic.com https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *;script-src 'self' 'unsafe-eval' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://localhost:35729 http://webcz http://195.168.126.93:51874 https://ows.provident.cz:43008 https://ows.provident.cz https://push.ionic.io https://codepush.azurewebsites.net data: gap: maps.googleapis.com maps.gstatic.com https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *;script-src 'self' http://localhost:35729 'unsafe-eval' 'unsafe-inline'; connect-src *">
 
     <title></title>
 
@@ -35,8 +35,11 @@
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
+    <script src="js/controllers/login.js"></script>
     <script src="js/controllers.js"></script>
     <script src="js/services.js"></script>
+    <script src="js/services/constants.js"></script>
+    <script src="js/services/userdata.js"></script>
   </head>
   <body ng-app="starter" class="platform-android platform-cordova platform-webview">
     <!--

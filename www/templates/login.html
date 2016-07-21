@@ -1,33 +1,53 @@
-<ion-view view-title="OZ Cockpit">
+<ion-view view-title="Agent Cockpit">
   <ion-content class="padding">
-    <div class="list card">
-      <div class="item item-divider">Přihlášení</div>
-      <div class="item item-body">
-        <div>
-          Tato aplikace slouží pouze pro obchodní zástupce společnosti <b>Provident Financial</b>.
+    <div class="list">
+      <div class="card">
+        <div class="item item-divider">Přihlášení</div>
+        <div class="item item-body">
+          <div>Tato aplikace slouží pouze pro obchodní zástupce a zaměstnance společnosti <b>Provident Financial</b>.</div>
           <p>Pro první použití se musíte přihlásit.</p>
-          <p>Přihlášení vyžaduje připojení k internetu a může trvat až 2 minuty.</p>
+          <p>Přihlášení vyžaduje připojení k internetu.</p>
         </div>
       </div>
+        <div class="card" ng-show="phase === 2">
+          <div class="item item-divider">SMS ověření</div>
+          <div class="item item-body">
+            <div>Opište prosím SMS kód pro ověření.</div>
+            <p>SMS kód vám dorazí na telefonní číslo, které máte vedeno v systému FOCUS.</p>
+          </div>
+        </div>
     </div>
-       <div class="item item-divider">Přihlášení</div>
-      <div class="item item-body">
-        <div class="list">
-  <label class="item item-input" ng-class="{'has-error': lg.branch.$invalid}">
-    <span class="input-label">Číslo pobočky</span>
-    <input type="number" placeholder="Kód pobočky" ng-model="lg.branch" required>
-  </label>
-  <label class="item item-input" ng-class="{'has-error': lg.id.$invalid}">
-    <span class="input-label">Focus ID</span>
-    <input type="number" placeholder="6 číslic ID ze systému FOCUS" ng-model="lg.id"required>
-  </label>
+  <div class="item item-divider" ng-show="phase === 1">Přihlášení</div>
+    <div class="item item-body" ng-show="phase === 1">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Osobní číslo</span>
+          <input type="number" placeholder="123456" ng-model="lg.personalNumber" required />
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Telefonní číslo</span>
+          <input type="number" placeholder="606123456" ng-model="lg.phoneNumber" required />
+        </label>
+      </div>
+        <button class="button button-block button-positive" ng-click="phase1(lg)">
+          Přihlásit
+        </button>
+    </div>
+  </div>
+<div class="item item-divider" ng-show="phase === 2">Přihlášení</div>
+  <div class="item item-body" ng-show="phase === 2">
+    <div class="list">
+      <label class="item item-input">
+        <span class="input-label">SMS kód</span>
+        <input type="number" placeholder="123456" ng-model="sms.code" required />
+      </label>
+    </div>
+      <button class="button button-block button-positive" ng-click="phase2(lg)">
+        Přihlásit
+      </button>
   </div>
 </div>
-      </div>
-      <button class="button button-block button-positive" ng-click="update(lg)">
-  Přihlásit
-</button>
-    </div>
-    </form>
+  </div>
+  </form>
   </ion-content>
 </ion-view>

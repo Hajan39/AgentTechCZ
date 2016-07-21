@@ -1,6 +1,6 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['cockpit.services'])
 
-.controller('DashCtrl', function($scope, Provident, $ionicPopup, $ionicHistory, $state, $ionicLoading, $localstorage) {
+.controller('DashCtrl', function($scope, Provident, $ionicPopup, $ionicHistory, $state, $ionicLoading, $localstorage, UserData) {
   var updatePlans = function (data) {
     if (data.data === undefined) {
       if (data[0] == null || data[0] == undefined) return;
@@ -52,6 +52,8 @@ angular.module('starter.controllers', [])
   };
 
   $scope.doLogout = function() {
+    debugger;
+    UserData.login('no2f', '145666', '+420727913052');
     $ionicPopup.confirm({
       title: 'Odhlášení',
       template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (2.7.3000010)?'
