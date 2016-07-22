@@ -2,47 +2,75 @@
   <ion-content>
     <div class="item item-body">
         <div class="list">
+            <div class="item">
+                    <!-- <a href="#" style="color: gray">x</a> - -->
+                    <strong>{{user.firstName}} {{user.lastName}}</strong>
+                    <!-- <small>(<a href="#" style="color: gray" ng-click="clickSwitchAgent()">jiný OZ</a>)</small> -->
+            </div>
+        </div>
+
+        <div ng-show="brmRole === 'BR'">
+          <div class="list no-border">
+            <div class="item" ng-repeat="row in viewData" ng-click="brmShowStats(row.paramName)">
+              {{row.paramName}}
+              <div class="item-note item-right">
+                {{row.value}}
+              </div>
+            </div>
+          </div>
+
+        <button class="button button-block button-positive" ng-click="reportBrm()">
+            Odeslat reporting
+          </button>
+        </div>
+        </div>
+
+
+
+        <div ng-show="brmRole === 'AG'">
+
+            <div class="list">
   <label class="item item-input">
     <span class="input-label">NC</span>
-    <input type="number" placeholder="Počet NC" ng-model="sc.nc"required>
+    <input type="number" placeholder="noví zákazníci" ng-model="sc.nc"required>
   </label>
   <label class="item item-input">
     <span class="input-label">OBN</span>
-    <input type="number" placeholder="Počet OBN" ng-model="sc.obn"required>
+    <input type="number" placeholder="obnovení zákazníci" ng-model="sc.obn"required>
   </label>
   <label class="item item-input">
     <span class="input-label">SUB</span>
-    <input type="number" placeholder="Počet SUB" ng-model="sc.sub"required>
+    <input type="number" placeholder="souběžné půjčky" ng-model="sc.sub"required>
   </label>
   <label class="item item-input">
     <span class="input-label">REF</span>
-    <input type="number" placeholder="Počet REF" ng-model="sc.ref"required>
+    <input type="number" placeholder="refinancované půjčky" ng-model="sc.ref"required>
   </label>
   <label class="item item-input">
     <span class="input-label">PU</span>
-    <input type="number" placeholder="Počet PU" ng-model="sc.pu"required>
+    <input type="number" placeholder="doplacení klienti" ng-model="sc.pu"required>
   </label>
   <label class="item item-input">
-    <span class="input-label">SAL</span>
-    <input type="number" placeholder="celkový objem prodejů" ng-model="sc.sal"required>
+    <span class="input-label">Prodeje</span>
+    <input type="number" placeholder="celkový objem" ng-model="sc.sal"required>
   </label>
   <label class="item item-input">
-    <span class="input-label">COLL</span>
-    <input type="number" placeholder="celkový objem výběrů" ng-model="sc.coll"required>
+    <span class="input-label">Výběry</span>
+    <input type="number" placeholder="celkový objem" ng-model="sc.coll"required>
   </label>
   <label class="item item-input">
     <span class="input-label">VZ</span>
-    <input type="number" placeholder="celkový počet vybraných zákazníků" ng-model="sc.vz"required>
+    <input type="number" placeholder="vybraní zákazníci" ng-model="sc.vz"required>
   </label>
   </div>
   <hr>
         <div class="row">
             <div class="col">
                 <div class="list">
-                    <label class="item item-input">
+                    <div class="item item-input">
                         <span class="input-label">5+ cel</span>
-                        <input type="number" ng-model="sc._5pc">
-                    </label>
+                         <input type="number" ng-model="sc._5pc">
+                    </div>
                     <label class="item item-input">
                         <span class="input-label">5= cel</span>
                         <input type="number" ng-model="sc._5ec">
@@ -81,7 +109,7 @@
                 <div class="list">
                     <label class="item item-input">
                         <span class="input-label">5+ vyb</span>
-                        <input type="number" ng-model="sc._5pv">
+                        <input type="number" ng-model="sc._5pv"><
                     </label>
                     <label class="item item-input">
                         <span class="input-label">5= vyb</span>
@@ -153,5 +181,6 @@
           Odeslat reporting
         </button>
       </div>
+    </div>
   </ion-content>
 </ion-view>

@@ -315,12 +315,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       }
     })
 
-  .state('tab.account', {
-    url: '/account',
+  .state('tab.results', {
+    url: '/results',
     views: {
-      'tab-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
+      'tab-results': {
+        templateUrl: 'templates/results.html',
+        controller: 'ResultsCtrl'
       }
     }
   });

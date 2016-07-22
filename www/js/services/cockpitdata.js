@@ -39,6 +39,45 @@ angular.module('cockpit.services')
       });
     },
 
+    getReports: function() {
+      return getData('reports', 'reports').then(function (result) {
+        var reports = result.data.plan;
+        return {
+          plans: [
+            {paramName: 'NC', value: reports.nc.value},
+            {paramName: 'OBN', value: reports.obn.value},
+            {paramName: 'SUB', value: reports.sub.value},
+            {paramName: 'REF', value: reports.ref.value},
+            {paramName: 'PU', value: reports.pu.value},
+            {paramName: 'Prodeje', value: reports.sales.value},
+            {paramName: 'Výběry', value: reports.collections.value},
+            {paramName: 'VZ', value: reports.vz.value},
+            {paramName: '5+', value: `${reports.c5Plus.value}/${reports.c5PlusTotal.value}`},
+            {paramName: '5=', value: `${reports.c5.value}/${reports.c5Total.value}`},
+            {paramName: '8=', value: `${reports.c8.value}/${reports.c8Total.value}`},
+            {paramName: '12+', value: `${reports.c12Plus.value}/${reports.c12PlusTotal.value}`},
+            {paramName: 'RIA', value: `${reports.ria.value}/${reports.riaTotal.value}`},
+            {paramName: 'NRIA', value: `${reports.nria.value}/${reports.nriaTotal.value}`},
+            {paramName: 'QC', value: `${reports.qc.value}/${reports.qcTotal.value}`},
+            {paramName: 'BTQ', value: `${reports.btq.value}/${reports.btqTotal.value}`},
+            {paramName: '12', value: `${reports.c12St.value}/${reports.c12StTotal.value}`},
+            {paramName: 'Predikce', value: `NC - ${reports.ncPred.value}, Prodeje - ${reports.salPred.value}, Výběry - ${reports.collPred.value}`},
+          ],
+          fulfillment: result.data.fulfillment
+        };
+      });
+    },
+
+    sendReports: function () {
+      UserData.post('reports', {});
+    },
+
+    getParamReports: function(paramName) {
+      getData('reports/' + paramName).then(function (result) {
+        console.log(result);
+      })
+    },
+
     getStats: function () {
       return getData('stats', 'stats').then(function (result) {
         if (result.code != 'OK') {

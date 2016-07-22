@@ -180,7 +180,7 @@ angular.module('cockpit.services')
         }).catch(function (error) {
           if (error.status === 401 && reauthorize) {
             that.reauthorize().then(function () {
-              that.get(url, false).then(function (result) {
+              that.get(url, storageKey, false).then(function (result) {
                 if (storageKey !== undefined) {
                   storage[storageKey] = {value: data.data};
                   $localstorage.setObject(STORAGE_KEY, storage);
@@ -188,6 +188,46 @@ angular.module('cockpit.services')
                 }
 
                 resolve(result);
+              }).catch(function (error) {
+                resolve({code: 'ERR'});
+              });
+            });
+          } else {
+            resolve({code: 'ERR'});
+          }
+        });
+      });
+    },
+
+    post: function(url, data, reauthorize) {
+      if (reauthorize === undefined) {
+        reauthorize = true;
+      }
+
+      return $q(function (resolve) {
+        if (!that.hasLoggedIn()) {
+          this.logout();
+          window.location.reload();
+        }
+
+        var accessToken = $localstorage.get(ACCESS_TOKEN, '');
+
+        $http({
+          'method': 'POST',
+          'url': URI_SERVER + url,
+          'data': data,
+          'headers': {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + accessToken
+          }
+        }).then(function (data) {
+            resolve({code: 'OK', data: data.data});
+        }).catch(function (error) {
+          if (error.status === 401 && reauthorize) {
+            that.reauthorize().then(function () {
+              that.get(url, false).then(function (result) {
+              resolve(result);
               }).catch(function (error) {
                 resolve({code: 'ERR'});
               });
