@@ -1,71 +1,5 @@
 angular.module('cockpit.controllers')
 
-/*.controller('LoginCtrl', function($scope, $state, Provident, $ionicLoading, $localstorage, $ionicHistory, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
-  $scope.lg = {
-    id: '',
-    branch: ''
-  };
-  $scope.update = function(data) {
-    $ionicLoading.show({
-      template: '<div><div><ion-spinner icon="ripple" class="spinner-energized" style="width: 128px; height: 128px"></div><div>Probíhá přihlašování (může trvat až 2 minuty)</div></div>'
-    });
-    //window.device = {uuid: Provident.getUuid()};
-    var ridb = "000000000" + data.id.toString();
-    var rid = (data.branch.toString() == '6' ? '0006' : data.branch.toString()) + ridb.substring(ridb.length - 9, ridb.length);
-    var text = "#ACAT;" + rid + ";" + device.uuid + ";";
-
-      $cordovaSms.send('+420606999008', text).then(function() {
-        var checker = function (i, checker) {
-          Provident.verifyAuth(device.uuid, function () {
-            $ionicLoading.hide();
-            $cordovaGoogleAnalytics.trackEvent('Login', 'Success');
-            $ionicHistory.nextViewOptions({
-              disableBack: true
-            });
-            $scope.lg = {
-              id: '',
-              branch: ''
-            };
-            $state.go('tab.dash');
-          }, function (msg) {
-            i += 1;
-            if (msg == null || i >= 3) {
-              $ionicLoading.hide();
-              $cordovaGoogleAnalytics.trackEvent('Login', 'Invalid-WrongRepreId');
-              $ionicPopup.alert({
-                title: 'Upozornění',
-                template: 'Přihlášení bylo neúspěšné.<br><small>Prosím opakujte znovu. V případě potíží kontaktuje IT helpdesk (ID <code>'+device.uuid+'</code>).</small>'
-              });
-            } else if (msg != null) {
-              $ionicLoadinghide();
-              $cordovaGoogleAnalytics.trackEvent('Login', 'Invalid-ServerError');
-              $ionicPopup.alert({
-                title: 'Upozornění',
-                template: 'Přihlášení bylo neúspěšné.<br><small>Zkontrolujte své připojení k internetu. V případě potíží kontaktuje IT helpdesk (ID <code>'+device.uuid+'</code>, chyba: <code>'+msg+'</code>).</small>'
-              });
-            } else {
-              window.setTimeout(checker, 3000, i, checker);
-            }
-          }, function (error) {
-              $cordovaGoogleAnalytics.trackEvent('Login', 'Invalid-Error');
-              $ionicPopup.alert({
-                title: 'Chyba',
-                template: 'Přihlášení bylo neúspěšné.<br><small>Zkontrolujte své připojení k internetu. V případě potíží kontaktuje IT helpdesk (ID <code>'+device.uuid+'</code>).</small>'
-              });
-          });
-        };
-
-        window.setTimeout(checker, 3000, 1, checker);
-      }, function (error) {
-              $cordovaGoogleAnalytics.trackEvent('Login', 'Invalid-Error');
-          $ionicPopup.alert({
-            title: 'Chyba',
-            template: 'Přihlášení bylo neúspěšné.<br><small>V případě potíží kontaktuje IT helpdesk (ID <code>'+device.uuid+'</code>).</small>'
-          });
-      });
-  };
-})*/
-
 .controller('LoginCtrl', function($scope, $state, UserData, $ionicLoading, $ionicHistory, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.lg = {
     personalNumber: null,
@@ -149,7 +83,7 @@ angular.module('cockpit.controllers')
             $ionicHistory.nextViewOptions({
               disableBack: true
             });
-            $state.go('tab.dash');
+            $state.transitionTo('tab.dash', {}, { reload: true, inherit: true, notify: true });
             break;
           case 'INC':
             $scope.sms.code = null;

@@ -39,6 +39,36 @@ if (!Array.prototype.reduce) {
 
 [].map||(Array.prototype.map=function(a){for(var b=this,c=b.length,d=[],e=0,f;e<b;)d[e]=e in b?a.call(arguments[1],b[e],e++,b):f;return d});
 
+if (!Array.prototype.filter)
+{
+  Array.prototype.filter = function(fun /*, thisp */)
+  {
+    "use strict";
+
+    if (this === void 0 || this === null)
+      throw new TypeError();
+
+    var t = Object(this);
+    var len = t.length >>> 0;
+    if (typeof fun !== "function")
+      throw new TypeError();
+
+    var res = [];
+    var thisp = arguments[1];
+    for (var i = 0; i < len; i++)
+    {
+      if (i in t)
+      {
+        var val = t[i]; // in case fun mutates this
+        if (fun.call(thisp, val, i, t))
+          res.push(val);
+      }
+    }
+
+    return res;
+  };
+}
+
 angular.module('cockpit.services', ['ionic', 'ngCordova']);
 angular.module('cockpit.controllers', ['ionic', 'ngCordova', 'cockpit.services']);
 
@@ -203,7 +233,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     url: '/dash',
     views: {
       'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
+        templateUrl: 'templates/dashboard.html',
         controller: 'DashCtrl'
       }
     }

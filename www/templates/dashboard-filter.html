@@ -1,0 +1,13 @@
+<ion-popover-view>
+  <ion-content>
+    <div class="list">
+      <a class="item" href="#" ng-click="subFilterChoose(null, $event)">
+        {{user.positionName}}
+      </a>
+      <hr />
+      <a class="item" ng-repeat="sub in subs" href="#" ng-click="subFilterChoose(sub, $event)">
+        {{sub.roleDescription}}
+      </a>
+    </div>
+  </ion-content>
+</ion-popover-view>

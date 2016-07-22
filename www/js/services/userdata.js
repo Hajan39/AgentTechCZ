@@ -6,8 +6,10 @@ angular.module('cockpit.services')
   var ACCESS_TOKEN = 'accessToken';
   var VALIDATION_TOKEN = 'validationToken';
   var STORAGE_KEY = 'storage';
+  var PASSWORD = 'phoneNumber';
+  var LAST_UPDATE = 'lastUpdate';
 
-  return {
+  var that = {
     login: function(type, username, password, text, token) {
       if (type === 'no2f') {
         return $q(function (resolve) {
@@ -43,7 +45,7 @@ angular.module('cockpit.services')
             }
           });
         });
-      } else if (type === '2f') {
+      } else if (type == '2f') {
         return $q(function (resolve) {
           $http({
             method: 'POST',
@@ -65,6 +67,9 @@ angular.module('cockpit.services')
             $localstorage.set(HAS_LOGGED_IN, 'true');
             $localstorage.set(VALIDATION_TOKEN, token);
             $localstorage.set(ACCESS_TOKEN, data.data.access_token);
+            $localstorage.set(STORAGE_KEY, '{}');
+            $localstorage.set(PASSWORD, password);
+
             resolve({code: 'OK'});
           }).catch(function (error) {
             if (error.status !== 400) {
@@ -82,7 +87,42 @@ angular.module('cockpit.services')
             }
           });
         });
+      } else {
+        return $q(function (resolve) {
+          var realPassword = $localstorage.get(PASSWORD, '');
+          if (realPassword.length === 0) {
+            resolve({});
+            return;
+          }
+
+          $http({
+            method: 'POST',
+            url: URI_AUTHORIZATION_SERVER + 'oauth2/token',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Accept': 'application/json'
+            },
+            data: $.param({
+              username: token,
+              password: realPassword,
+              grant_type: 'password',
+              type: 'token',
+              client_id: CLIENT_ID,
+              validationToken: token
+            })
+          }).then(function(data) {
+            $localstorage.set(ACCESS_TOKEN, data.data.access_token);
+
+            resolve({});
+          }).catch(function (error) {
+            resolve({});
+          });
+        });
       }
+    },
+
+    getLastUpdate: function() {
+      return moment(new Date($localstorage.get(LAST_UPDATE)));
     },
 
     logout: function() {
@@ -90,21 +130,33 @@ angular.module('cockpit.services')
       $localstorage.set(HAS_LOGGED_IN, undefined);
       $localstorage.set(VALIDATION_TOKEN, undefined);
       $localstorage.set(ACCESS_TOKEN, undefined);
+      $localstorage.set(LAST_UPDATE, undefined);
     },
 
     hasLoggedIn: function() {
       return $localstorage.get(HAS_LOGGED_IN, undefined) === 'true';
     },
 
-    get: function(url, reauthorize) {
+    refresh: function() {
+      $localstorage.set(STORAGE_KEY, '{}');
+    },
+
+    get: function(url, storageKey, reauthorize) {
       if (reauthorize === undefined) {
         reauthorize = true;
       }
 
       return $q(function (resolve) {
-        if (!this.hasLoggedIn()) {
+        if (!that.hasLoggedIn()) {
           this.logout();
-          resolve({code: 'LO'});
+          window.location.reload();
+        }
+
+        var storage = $localstorage.getObject(STORAGE_KEY);
+
+        if (storageKey !== undefined && storage[storageKey] !== undefined) {
+          resolve({code: 'OK', data: storage[storageKey].value});
+          return;
         }
 
         var accessToken = $localstorage.get(ACCESS_TOKEN, '');
@@ -118,11 +170,23 @@ angular.module('cockpit.services')
             'Authorization': 'Bearer ' + accessToken
           }
         }).then(function (data) {
-            resolve({code: 'OK', data: data});
+            if (storageKey !== undefined) {
+              storage[storageKey] = {value: data.data};
+              $localstorage.setObject(STORAGE_KEY, storage);
+              $localstorage.set(LAST_UPDATE, new Date());
+            }
+
+            resolve({code: 'OK', data: data.data});
         }).catch(function (error) {
           if (error.status === 401 && reauthorize) {
-            this.reauthorize().then(function () {
-              this.get(url, false).then(function (result) {
+            that.reauthorize().then(function () {
+              that.get(url, false).then(function (result) {
+                if (storageKey !== undefined) {
+                  storage[storageKey] = {value: data.data};
+                  $localstorage.setObject(STORAGE_KEY, storage);
+                  $localstorage.set(LAST_UPDATE, new Date());
+                }
+
                 resolve(result);
               }).catch(function (error) {
                 resolve({code: 'ERR'});
@@ -136,9 +200,11 @@ angular.module('cockpit.services')
     },
 
     reauthorize: function() {
-      return $q(function (resolve) {
-        resolve({});
-      });
+      var token = $localstorage.get(VALIDATION_TOKEN, '');
+
+      return that.login('token', token, '', '', token);
     }
   };
+
+  return that;
 });
