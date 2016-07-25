@@ -6,7 +6,7 @@ angular.module('cockpit.controllers')
   $scope.doLogout = function() {
     $ionicPopup.confirm({
       title: 'Odhlášení',
-      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (2.7.3000010)?'
+      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (2.7.3000012)?'
     }).then(function (res) {
       if (res) {
         UserData.logout();
@@ -180,7 +180,7 @@ angular.module('cockpit.controllers')
     $scope.commDetail.showNextWeek = false;
     var newWeek = $scope.commDetail.weekId - 1;
 
-    CockpitData.getAgentCommissionDetail($scope.comm.weekId).then(function (data) {
+    CockpitData.getAgentCommissionDetail(newWeek).then(function (data) {
       if (data == null) {
         $scope.commDetail = {
           show: false
@@ -195,15 +195,16 @@ angular.module('cockpit.controllers')
         totalAmount: data.totalAmount,
         comm: data.comm
       };
+      //$scope.$apply();
     });
   };
 
-  $scope.doPreviousWeek = function() {
+  $scope.doNextWeek = function() {
     $scope.commDetail.showPreviousWeek = false;
     $scope.commDetail.showNextWeek = false;
     var newWeek = $scope.commDetail.weekId + 1;
 
-    CockpitData.getAgentCommissionDetail($scope.comm.weekId).then(function (data) {
+    CockpitData.getAgentCommissionDetail(newWeek).then(function (data) {
       if (data == null) {
         $scope.commDetail = {
           show: false
@@ -218,6 +219,7 @@ angular.module('cockpit.controllers')
         totalAmount: data.totalAmount,
         comm: data.comm
       };
+      //$scope.$apply();
     });
   };
 })

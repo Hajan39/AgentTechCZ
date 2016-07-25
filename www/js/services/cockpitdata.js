@@ -83,7 +83,21 @@ angular.module('cockpit.services')
     },
 
     getParamReports: function(paramName) {
-      return getData('reports/' + encodeURIComponent(paramName)).then(function (result) {
+      return getData('reports/' + paramName.replace('+', '_')).then(function (result) {
+        if (result.code !== 'OK') return [];
+
+        if (paramName == '5+' || paramName == '5=' || paramName == '8=' || paramName == '12+' || paramName == '12'
+          || paramName == 'RIA' || paramName == 'NRIA' || paramName == 'QC' || paramName == 'BTQ') {
+          return result.data.map(function (e) { return {
+            name: e.name,
+            value: e.value + '/' + e.valueTotal
+          }});
+        } else if (paramName == 'Predikce') {
+          return result.data.map(function (e) { return {
+            name: e.name,
+            value: 'NC - ' + e.ncValue +', Prodeje - '+e.salValue+', Výběry - '+e.collValue,
+          }});
+        }
         return result.data;
       })
     },
@@ -154,7 +168,7 @@ angular.module('cockpit.services')
 
     getAgentCommissionDetail: function (weekId) {
       return UserData.get('comm/' + weekId).then(function (result) {
-        if (result.code != 'OK' || result.data.length !== undefined) {
+        if (result.code != 'OK' || result.data.length === undefined) {
           return null;
         }
 
