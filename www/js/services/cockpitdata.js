@@ -69,12 +69,22 @@ angular.module('cockpit.services')
     },
 
     sendReports: function () {
-      UserData.post('reports', {});
+      return $q(function (resolve, reject) {
+        UserData.post('reports', {}).then(function (result) {
+          if (result.data.result == 0) {
+            resolve();
+          } else {
+            reject(result.data.errorMessage);
+          }
+        }).catch(function () {
+          reject();
+        });
+      });
     },
 
     getParamReports: function(paramName) {
-      getData('reports/' + paramName).then(function (result) {
-        console.log(result);
+      return getData('reports/' + encodeURIComponent(paramName)).then(function (result) {
+        return result.data;
       })
     },
 

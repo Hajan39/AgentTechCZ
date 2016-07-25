@@ -1,6 +1,6 @@
 angular.module('cockpit.controllers')
 
-.controller('ResultsCtrl', function($scope, $state, $ionicLoading, $localstorage, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics, CockpitData) {
+.controller('ResultsCtrl', function($scope, $state, $ionicLoading, $localstorage, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics, CockpitData, $ionicModal) {
   // BRM Results
 
   $scope.brmRole = '';
@@ -19,13 +19,71 @@ angular.module('cockpit.controllers')
     }
   });
 
-  $scope.brmShowStats = function (paramName) {
-    CockpitData.getParamReports(paramName);
+  $scope.reportBrm = function() {
+    var action = function () {
+      CockpitData.sendReports().then(function () {
+        $ionicPopup.alert({
+          title: 'Výsledky odeslány na bránu'
+        });
+      }).catch(function (message) {
+        $ionicPopup.alert({
+          title: 'Chyba',
+          template: message !== undefined && message.length > 0 ? message : 'Výsledky se nepodařilo odeslat'
+        })
+      });
+    }
+
+    if ($scope.fulfillment.length > 0) {
+      var myPopup = $ionicPopup.show({
+        template: $scope.fulfillment.map(function (i) {
+          return i + '<br>';
+        }),
+        title: 'Opravdu chcete odeslat výsledky?',
+        subTitle: 'Následující OZ zatím nedoslali své výsledky.',
+        scope: $scope,
+        buttons: [
+          {
+            text: 'Zrušit'
+          },
+          {
+            text: '<strong>Odeslat</strong>',
+            type: 'button-positive',
+            onTap: function (e) {
+              action();
+            }
+          }
+        ]
+      });
+    } else {
+      var myPopup = $ionicPopup.confirm({
+        title: 'Opravdu chcete odeslat výsledky?'
+      }).then(function (e) {
+        action();
+      });
+    }
   };
 
-  $scope.reportBrm = function() {
-    CockpitData.sendReports();
+  $ionicModal.fromTemplateUrl('templates/results-detail.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    $scope.brmModal = modal;
+  });
+
+  $scope.brmModalData = {paramName: '', reports: []};
+
+  $scope.brmShowStats = function (paramName) {
+    CockpitData.getParamReports(paramName).then(function (reports) {
+      $scope.brmModalData = {
+        paramName: paramName,
+        reports: reports
+      };
+      $scope.brmModal.show();
+    });
   };
+  $scope.brmModalClose = function() {
+    $scope.brmModal.hide();
+  }
 
   // Agent SMS
 

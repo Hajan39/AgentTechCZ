@@ -1,0 +1,20 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Parametr {{brmModalData.paramName}}</h1>
+  </ion-header-bar>
+  <ion-content>
+    <div class="list no-border">
+      <div class="item" ng-repeat="row in brmModalData.reports" ng-click="brmModalClose()">
+        {{row.name}}
+        <div class="item-note item-right">
+          {{row.value}}
+        </div>
+      </div>
+        <div class="item" ng-click="brmModalClose()">
+          <div class="item-note item-right">
+            zpět
+          </div>
+        </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

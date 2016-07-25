@@ -7,6 +7,7 @@ The Friends service returns an array of friend data
 <ion-view view-title="Produktová tabulka">
   <ion-content class="padding">
     <h2>{{ gl.term }} {{ gl.freq }} {{ gl.discount }}</h2>
+   <input type="text" id="myProductRange" name="myProductRange" value="" />
     <div class="list">
         <span class="item" ng-repeat="row in table">
             {{ row.IssueValue | number }} Kč
