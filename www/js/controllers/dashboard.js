@@ -1,6 +1,6 @@
 angular.module('cockpit.controllers')
 
-.controller('DashCtrl', function($scope, Provident, $ionicPopup, $ionicPopover, $ionicHistory, $state, $ionicLoading, $localstorage, UserData, CockpitData) {
+.controller('DashCtrl', function($scope, Provident, $ionicPopup, $ionicPopover, $ionicHistory, $state, $ionicLoading, $localstorage, UserData, CockpitData, $timeout) {
   // Logout
 
   $scope.doLogout = function() {
@@ -14,6 +14,21 @@ angular.module('cockpit.controllers')
       }
     });
   };
+
+  $timeout(function() {
+    CockpitData.softRefresh().then(function (data) {
+      $scope.user = data.user.position;
+      $scope.subs = data.user.subs;
+      $scope.chosenView = {
+        id: null,
+        roleDescription: data.user.position.firstName + ' ' + data.user.position.lastName
+      };
+      $scope.stats = data.stats;
+      $scope.comm = data.comm;
+
+      $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+    });
+  }, 2*1000);
 
   $scope.doRefresh = function() {
     CockpitData.refresh().then(function (data) {

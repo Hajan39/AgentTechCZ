@@ -167,7 +167,7 @@ angular.module('cockpit.services')
               case 'RETURN': return {typeName: 'Vrácené půjčky (ND)', amount: e.amount};
               default: return e
             }
-          }
+          })
         };
       }).catch(function() {
         return null;
@@ -190,6 +190,18 @@ angular.module('cockpit.services')
             })
           });
         });
+      });
+    },
+
+    softRefresh: function() {
+      UserData.get('/').then(function (result) {
+        if (result.code == 'OK') {
+          return that.refresh();
+        }
+      });
+
+      return $q(function (resolve, reject) {
+        reject();
       });
     }
   };
