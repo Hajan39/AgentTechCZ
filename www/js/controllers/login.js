@@ -1,6 +1,6 @@
 angular.module('cockpit.controllers')
 
-.controller('LoginCtrl', function($scope, $state, UserData, $ionicLoading, $ionicHistory, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
+.controller('LoginCtrl', function($scope, $state, UserData, $ionicLoading, $ionicHistory, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics, $timeout) {
   $scope.lg = {
     personalNumber: null,
     phoneNumber: null,
@@ -24,6 +24,26 @@ angular.module('cockpit.controllers')
   }
 
   $scope.phase1 = function(formData) {
+    var startRep = function() {
+        if (!window.SMS) return;
+        console.log('intercept start');
+        /*$ionicLoading.show({
+          'template': 'Vyčkejte, probíhá přihlašování'
+        });
+
+        var seconds = 0;
+        $timeout(function() {
+          if (seconds > 70*1000) {
+            $ionicLoading.hide();
+          }
+
+          window.SMS.listSMS({
+            box: 'inbox',
+            address: ''
+          })
+        }, 1*1000);*/
+    }
+
     if ($scope.lg.personalNumber === null || ($scope.lg.personalNumber.toString().length !== 4 && $scope.lg.personalNumber.toString().length !== 6)) {
       $ionicPopup.alert({
         title: 'Chyba',
@@ -45,6 +65,7 @@ angular.module('cockpit.controllers')
           $scope.token = resultNo2F.token;
           $scope.sms.code = null;
           $scope.phase = 2;
+          startRep();
           break;
         case 'REP':
           $ionicPopup.alert({
@@ -69,6 +90,7 @@ angular.module('cockpit.controllers')
     });
 
     $scope.phase2 = function(formData) {
+      $scope.sms.code = formData.code;
       if ($scope.sms.code === null || $scope.sms.code.toString().length > 6) {
         $ionicPopup.alert({
           title: 'Chyba',

@@ -154,63 +154,55 @@ angular.module('cockpit.controllers')
         showPreviousWeek: true,
         showNextWeek: false,
         weekId: $scope.comm.weekId,
-        totalAmount: data.map(function (e) { return e.amount; }).reduce(function(a,b) { return a+b; }, 0),
-        comm: data.map(function (e) {
-          switch (e.typeName) {
-            case 'DRAWING': return {typeName: 'Výběry', amount: e.amount};
-            case 'ND': return {typeName: 'Noví zákazníci', amount: e.amount};
-            case 'RETURN': return {typeName: 'Vrácené půjčky (ND)', amount: e.amount};
-            default: return e
-          }
-        })
+        totalAmount: data.totalAmount,
+        comm: data.comm
       };
-      $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
     });
   };
+
   $scope.doPreviousWeek = function() {
     $scope.commDetail.showPreviousWeek = false;
     $scope.commDetail.showNextWeek = false;
     var newWeek = $scope.commDetail.weekId - 1;
-    Provident.commGetDetail(device.uuid, newWeek, function(data) {
+
+    CockpitData.getAgentCommissionDetail($scope.comm.weekId).then(function (data) {
+      if (data == null) {
+        $scope.commDetail = {
+          show: false
+        };
+      }
+
       $scope.commDetail = {
         show: true,
         showPreviousWeek: newWeek >= ($scope.comm.weekId - 10),
-        totalAmount: data.map(function (e) { return e.amount; }).reduce(function(a,b) { return a+b; }, 0),
         showNextWeek: newWeek < $scope.comm.weekId,
         weekId: newWeek,
-        comm: data.map(function (e) {
-          switch (e.typeName) {
-            case 'DRAWING': return {typeName: 'Výběry', amount: e.amount};
-            case 'ND': return {typeName: 'Noví zákazníci', amount: e.amount};
-            case 'RETURN': return {typeName: 'Vrácené půjčky (ND)', amount: e.amount};
-            default: return e
-          }
-        })
+        totalAmount: data.totalAmount,
+        comm: data.comm
       };
-      $scope.$apply();
     });
   };
-  $scope.doNextWeek = function() {
+
+  $scope.doPreviousWeek = function() {
     $scope.commDetail.showPreviousWeek = false;
     $scope.commDetail.showNextWeek = false;
     var newWeek = $scope.commDetail.weekId + 1;
-    Provident.commGetDetail(device.uuid, newWeek, function(data) {
+
+    CockpitData.getAgentCommissionDetail($scope.comm.weekId).then(function (data) {
+      if (data == null) {
+        $scope.commDetail = {
+          show: false
+        };
+      }
+
       $scope.commDetail = {
         show: true,
         showPreviousWeek: newWeek >= ($scope.comm.weekId - 10),
-        totalAmount: data.map(function (e) { return e.amount; }).reduce(function(a,b) { return a+b; }, 0),
         showNextWeek: newWeek < $scope.comm.weekId,
         weekId: newWeek,
-        comm: data.map(function(e) {
-          switch (e.typeName) {
-            case 'DRAWING': return {typeName: 'Výběry', amount: e.amount};
-            case 'ND': return {typeName: 'Noví zákazníci', amount: e.amount};
-            case 'RETURN': return {typeName: 'Vrácené půjčky (ND)', amount: e.amount};
-            default: return e
-          }
-        })
+        totalAmount: data.totalAmount,
+        comm: data.comm
       };
-      $scope.$apply();
     });
   };
 })

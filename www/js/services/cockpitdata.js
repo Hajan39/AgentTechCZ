@@ -154,11 +154,21 @@ angular.module('cockpit.services')
 
     getAgentCommissionDetail: function (weekId) {
       return UserData.get('comm/' + weekId).then(function (result) {
-        if (result.code != 'OK') {
+        if (result.code != 'OK' || result.data.length !== undefined) {
           return null;
         }
 
-        return result.data;
+        return {
+          totalAmount: result.data.map(function (e) { return e.amount; }).reduce(function(a,b) { return a+b; }, 0),
+          comm: result.data.map(function (e) {
+            switch (e.typeName) {
+              case 'DRAWING': return {typeName: 'Výběry', amount: e.amount};
+              case 'ND': return {typeName: 'Noví zákazníci', amount: e.amount};
+              case 'RETURN': return {typeName: 'Vrácené půjčky (ND)', amount: e.amount};
+              default: return e
+            }
+          }
+        };
       }).catch(function() {
         return null;
       });
