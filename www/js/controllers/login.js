@@ -27,6 +27,13 @@ angular.module('cockpit.controllers')
     })
   }
 
+  $scope.backToPhase1 = function() {
+    $scope.sms.code = null;
+    $scope.lg.personalNumber = null;
+    $scope.lg.phoneNumber = null;
+    $scope.phase = 1;
+  };
+
   $scope.phase1 = function(formData) {
     var startRep = function() {
         if (!window.SMS) return;
