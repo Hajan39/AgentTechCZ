@@ -168,8 +168,9 @@ angular.module('cockpit.controllers')
     $localstorage.setObject('resData', data);
     $localstorage.setObject('resDataUpdate', {timestamp: new Date()});
 
+CockpitData.getUser().then(function (userResult) {
     var text = "#ROZ" +
-      ';' + data.sid +
+      ';' + userResult.position.sid +
       ';' + data.nc + ' NC' +
       ';' + data.obn + ' OBN' +
       ';' + data.sub + ' SOU' +
@@ -227,5 +228,6 @@ angular.module('cockpit.controllers')
           template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
         });
       });
-  }
+  });
+}
 });

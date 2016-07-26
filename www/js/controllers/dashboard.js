@@ -38,11 +38,13 @@ angular.module('cockpit.controllers')
         id: null,
         roleDescription: data.user.position.firstName + ' ' + data.user.position.lastName
       };
-      $scope.stats = data.stats;
+      $scope.plans = data.stats.plans;
+      $scope.month = data.stats.month;
       $scope.comm = data.comm;
 
       $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
       $scope.$broadcast('scroll.refreshComplete');
+      $scope.$apply();
     });
   };
 

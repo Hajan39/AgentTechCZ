@@ -148,7 +148,11 @@ angular.module('cockpit.services')
 
       return $q(function (resolve) {
         if (!that.hasLoggedIn()) {
-          this.logout();
+          $localstorage.set(STORAGE_KEY, undefined);
+          $localstorage.set(HAS_LOGGED_IN, undefined);
+          $localstorage.set(VALIDATION_TOKEN, undefined);
+          $localstorage.set(ACCESS_TOKEN, undefined);
+          $localstorage.set(LAST_UPDATE, undefined);
           window.location.reload();
         }
 
