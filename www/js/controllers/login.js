@@ -7,6 +7,10 @@ angular.module('cockpit.controllers')
     phone: function(s) {
       var p = s.lg.phoneNumber.toString();
       return '+420' + p.substring(p.length - 9, p.length);
+    },
+    pers: function(s) {
+      var p = '000000' + s.lg.personalNumber.toString();
+      return s.lg.personalNumber === null ? '' : (p).substring(p.length - 6, p.length);
     }
   };
   $scope.sms = {
@@ -44,7 +48,7 @@ angular.module('cockpit.controllers')
         }, 1*1000);*/
     }
 
-    if ($scope.lg.personalNumber === null || ($scope.lg.personalNumber.toString().length !== 4 && $scope.lg.personalNumber.toString().length !== 6)) {
+    if ($scope.lg.personalNumber === null) {
       $ionicPopup.alert({
         title: 'Chyba',
         template: 'Špatně zadané osobní číslo.<br><small>Osobní číslo OZ má 6 číslic, osobní číslo zaměstnance 4 číslice.</small>'
@@ -59,7 +63,7 @@ angular.module('cockpit.controllers')
       return false;
     }
 
-    UserData.login('no2f', $scope.lg.personalNumber, $scope.lg.phone($scope)).then(function (resultNo2F) {
+    UserData.login('no2f', $scope.lg.pers($scope), $scope.lg.phone($scope)).then(function (resultNo2F) {
       switch (resultNo2F.code) {
         case 'OK':
           $scope.token = resultNo2F.token;
