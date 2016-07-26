@@ -3,6 +3,21 @@ angular.module('cockpit.controllers')
 .controller('DashCtrl', function($scope, Provident, $ionicPopup, $ionicPopover, $ionicHistory, $state, $ionicLoading, $localstorage, UserData, CockpitData, $timeout) {
   // Logout
 
+  var performRefresh = function (data) {
+    $scope.user = data.user.position;
+    $scope.subs = data.user.subs;
+    $scope.chosenView = {
+      id: null,
+      roleDescription: data.user.position.firstName + ' ' + data.user.position.lastName
+    };
+    $scope.plans = data.stats.plans;
+    $scope.month = data.stats.month;
+    $scope.comm = data.comm;
+
+    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+    $scope.$broadcast('scroll.refreshComplete');
+  };
+
   $scope.doLogout = function() {
     $ionicPopup.confirm({
       title: 'Odhlášení',
@@ -10,42 +25,20 @@ angular.module('cockpit.controllers')
     }).then(function (res) {
       if (res) {
         UserData.logout();
-        window.location.reload();
       }
     });
   };
 
   $timeout(function() {
-    CockpitData.softRefresh().then(function (data) {
-      $scope.user = data.user.position;
-      $scope.subs = data.user.subs;
-      $scope.chosenView = {
-        id: null,
-        roleDescription: data.user.position.firstName + ' ' + data.user.position.lastName
-      };
-      $scope.stats = data.stats;
-      $scope.comm = data.comm;
-
-      $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
-    });
+    CockpitData.softRefresh().then(performRefresh);
   }, 2*1000);
 
   $scope.doRefresh = function() {
-    CockpitData.refresh().then(function (data) {
-      $scope.user = data.user.position;
-      $scope.subs = data.user.subs;
-      $scope.chosenView = {
-        id: null,
-        roleDescription: data.user.position.firstName + ' ' + data.user.position.lastName
-      };
-      $scope.plans = data.stats.plans;
-      $scope.month = data.stats.month;
-      $scope.comm = data.comm;
+    CockpitData.refresh().then(performRefresh);
+  };
 
-      $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
-      $scope.$broadcast('scroll.refreshComplete');
-      $scope.$apply();
-    });
+  $scope.doSoftRefresh = function() {
+    CockpitData.softRefresh().then(performRefresh);
   };
 
   $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
