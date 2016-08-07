@@ -83,6 +83,7 @@ angular.module('cockpit.services')
     },
 
     getParamReports: function(paramName) {
+      if (paramName == 'Výběry') paramName = 'coll';
       return getData('reports/' + paramName.replace('+', '_')).then(function (result) {
         if (result.code !== 'OK') return [];
 
