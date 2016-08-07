@@ -233,16 +233,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     url: '/dash',
     views: {
       'tab-dash': {
-        templateUrl: 'templates/dashboard.html',
+        templateUrl: 'templates/dashboard/home.html',
         controller: 'DashCtrl'
       }
     }
   })
-  .state('tab.ag', {
-    url: '/ag',
+  .state('tab.product', {
+    url: '/product',
     views: {
-      'tab-ag': {
-        templateUrl: 'templates/tab-ag.html',
+      'tab-product': {
+        templateUrl: 'templates/product/home.html',
         controller: 'AgCtrl'
       }
     }
@@ -250,7 +250,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     .state('tab.product1', {
       url: '/product1/:discount/:type/:term/:issue',
       views: {
-        'tab-ag': {
+        'tab-product': {
           templateUrl: 'templates/product-step1.html',
           controller: 'Product1Ctrl'
         }
@@ -259,7 +259,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     .state('tab.product2', {
       url: '/product2/:discount/:type/:term/:issue',
       views: {
-        'tab-ag': {
+        'tab-product': {
           templateUrl: 'templates/product-step2.html',
           controller: 'Product1Ctrl'
         }
@@ -268,7 +268,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     .state('tab.table', {
       url: '/table/:discount/:type/:term/',
       views: {
-        'tab-ag': {
+        'tab-product': {
           templateUrl: 'templates/product-table.html',
           controller: 'ProductTableCtrl'
         }
@@ -289,7 +289,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       url: '/sms-scoring',
       views: {
         'tab-sms-scoring': {
-          templateUrl: 'templates/sms/scoring.html',
+          templateUrl: 'templates/scoring.html',
           controller: 'SmsScoringCtrl'
         }
       }
@@ -309,7 +309,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     url: '/results',
     views: {
       'tab-results': {
-        templateUrl: 'templates/results.html',
+        templateUrl: 'templates/results/home.html',
         controller: 'ResultsCtrl'
       }
     }

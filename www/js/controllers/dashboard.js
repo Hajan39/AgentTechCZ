@@ -68,7 +68,7 @@ angular.module('cockpit.controllers')
     $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
   });
 
-  $ionicPopover.fromTemplateUrl('templates/dashboard-filter.html', {
+  $ionicPopover.fromTemplateUrl('templates/dashboard/filter.html', {
     scope: $scope
   }).then(function(popover) {
     $scope.popover = popover;

@@ -63,7 +63,7 @@ angular.module('cockpit.controllers')
     }
   };
 
-  $ionicModal.fromTemplateUrl('templates/results-detail.html', {
+  $ionicModal.fromTemplateUrl('templates/results/detail.html', {
     scope: $scope,
     animation: 'slide-in-up'
   }).then(function(modal) {
