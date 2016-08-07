@@ -22,7 +22,8 @@ angular.module('cockpit.controllers')
     {text: 'Nezaměstnaný', value: 'NE'},
     {text: 'Invalidní důchodce', value: 'ID'},
     {text: 'Mateřská dovolená', value: 'MD'},
-    {text: 'Jiný', value: 'IN'},
+    {text: 'Dohoda o pracovní činnosti (DPČ)', value: 'DPC'},
+    {text: 'Dohoda o provedení práce (DPP)', value: 'DPP'}
   ];
   $scope.livList = [
     {text: 'Vlastník', value: 'VL'},
@@ -43,6 +44,21 @@ angular.module('cockpit.controllers')
     {text: '5 dětí', value: '5'},
     {text: '6 a více dětí', value: '6'},
   ];
+  $scope.maritalList = [
+    {text: 'svobodná/svobodný', value: 'SV'},
+    {text: 'vdaná/ženatý/reg. partnerství', value: 'ZVR'},
+    {text: 'rozvedená/rozvedený', value: 'RO'},
+    {text: 'partnerka/partner', value: 'PAR'},
+    {text: 'vdova/vdovec', value: 'VD'}
+  ];
+  $scope.educationList = [
+    {text: 'bez vzdělání', value: 'BV'},
+    {text: 'základní', value: 'ZAK'},
+    {text: 'učňovské', value: 'UC'},
+    {text: 'středoškolské', value: 'STR'},
+    {text: 'vyšší odborné', value: 'VO'},
+    {text: 'vysokoškolské', value: 'VS'}
+  ];
 
   var validate = function (arr) {
     var ret = true;
@@ -55,8 +71,8 @@ angular.module('cockpit.controllers')
   };
 
   $scope.score = function (data) {
-    if ((data.type == 'NC' && validate([data.pin, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.tmfi, data.tmvi, data.bank, data.car, data.chi]))
-      || (data.type == 'RES' && validate([data.cid, data.cb, data.tmvi, data.tmfi]))) {
+    if ((data.type == 'NC' && validate([data.pin, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih]))
+      || (data.type == 'RES' && validate([data.cid, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih]))) {
       $ionicPopup.alert({
         title: 'SMS',
         template: 'Skóring nelze odeslat.<br><small>Zkontrolujte, že jste vyplnili všechny povinné parametry.</small>'
@@ -79,20 +95,40 @@ angular.module('cockpit.controllers')
           '#' + data.cb.toString() +
           '#' + data.tmfi.toString() +
           '#' + data.tmvi.toString() +
-          '#' + (data.bank ? "A" : "N") +
+          '#' + data.eme.toString() +
+          '#' + data.pmi.toString() +
+          '#' + data.bank +
           '#' + data.liv +
-          '#' + (data.car ? "A" : "N") +
+          '#' + data.mar +
+          '#' + data.edu +
+          '#' + data.car +
           '#' + data.chi +
-          (data.id === null || data.id === undefined ? '' : '#' + data.id.toString()) +
-          (data.req === null || data.req === undefined ? '' : '#p' + data.req.toString())
+          '#' + data.mfih +
+          '#p' + (data.req.toString()) +
+          (data.id === null || data.id === undefined ? '' : '#' + data.id.toString())
           ;
       } else {
         var text = data.cid.toString() +
+          '#' + data.firstName +
+          '#' + data.lastName +
+          '#' + data.phone +
+          '#' + data.emp +
+          '#' + data.idt +
+          '#' + data.idn.toString() +
+          '#' + data.cb.toString() +
           '#' + data.tmfi.toString() +
           '#' + data.tmvi.toString() +
-          '#' + data.cb.toString() +
-          (data.id === null ? '' : '#' + data.id.toString()) +
-          (data.req === null ? '' : '#p' + data.req.toString())
+          '#' + data.eme.toString() +
+          '#' + data.pmi.toString() +
+          '#' + data.bank +
+          '#' + data.liv +
+          '#' + data.mar +
+          '#' + data.edu +
+          '#' + data.car +
+          '#' + data.chi +
+          '#' + data.mfih +
+          '#p' + (data.req.toString()) +
+          (data.id === null || data.id === undefined ? '' : '#' + data.id.toString())
         ;
       }
 
