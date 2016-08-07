@@ -208,14 +208,18 @@ angular.module('cockpit.services')
     },
 
     softRefresh: function() {
-      UserData.get('/').then(function (result) {
+      return UserData.get('/').then(function (result) {
         if (result.code == 'OK') {
           return that.refresh();
+        } else {
+          return $q(function (resolve, reject) {
+            reject();
+          });
         }
-      });
-
-      return $q(function (resolve, reject) {
-        reject();
+      }).catch(function () {
+        return $q(function (resolve, reject) {
+          reject();
+        });
       });
     }
   };

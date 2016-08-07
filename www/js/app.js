@@ -289,7 +289,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       url: '/sc-nc',
       views: {
         'tab-sc-nc': {
-          templateUrl: 'templates/tab-sc-nc.html',
+          templateUrl: 'templates/scoring.new.html',
           controller: 'ScNcCtrl'
         }
       }

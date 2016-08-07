@@ -56,6 +56,29 @@ angular.module('starter.controllers', ['cockpit.services'])
     liv: 'VL',
     chi: '0',
   };
+  $scope.empList = [
+    {text: 'Plný úvazek', value: 'PU'},
+    {text: 'Částečný úvazek', value: 'CU'},
+    {text: 'Důchodce', value: 'DO'},
+    {text: 'OSVČ (podnikatel)', value: 'PO'},
+    {text: 'Nezaměstnaný', value: 'NE'},
+    {text: 'Invalidní důchodce', value: 'ID'},
+    {text: 'Mateřská dovolená', value: 'MD'},
+    {text: 'Jiný', value: 'IN'},
+  ];
+  $scope.livList = [
+    {text: 'Vlastník', value: 'VL'},
+    {text: 'Žije s rodiči', value: 'ZSR'},
+    {text: 'Spoluvlastník', value: 'SVL'},
+    {text: 'Nájemník', value: 'NAJ'},
+    {text: 'Spolubydlící / podnájemník', value: 'SPO'},
+    {text: 'Domov důchodců', value: 'DD'},
+    {text: 'Ubytovna', value: 'UBY'},
+    {text: 'Jiné', value: 'INE'},
+  ];
+  /*
+
+  */
 })
 
 .controller('ScResCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {

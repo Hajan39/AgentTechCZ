@@ -14,14 +14,14 @@ angular.module('cockpit.controllers')
     $scope.month = data.stats.month;
     $scope.comm = data.comm;
 
-    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
     $scope.$broadcast('scroll.refreshComplete');
   };
 
   $scope.doLogout = function() {
     $ionicPopup.confirm({
       title: 'Odhlášení',
-      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (2.7.3000012)?'
+      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (2.7.3000020)?'
     }).then(function (res) {
       if (res) {
         UserData.logout();
@@ -38,10 +38,12 @@ angular.module('cockpit.controllers')
   };
 
   $scope.doSoftRefresh = function() {
-    CockpitData.softRefresh().then(performRefresh);
+    CockpitData.softRefresh().then(performRefresh).catch(function () {
+      $scope.$broadcast('scroll.refreshComplete');
+    });
   };
 
-  $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+  $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
 
   // Person detail
 
@@ -63,7 +65,7 @@ angular.module('cockpit.controllers')
         roleDescription: data.position.firstName + ' ' + data.position.lastName
       };
     }
-    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
   });
 
   $ionicPopover.fromTemplateUrl('templates/dashboard-filter.html', {
@@ -87,7 +89,7 @@ angular.module('cockpit.controllers')
     CockpitData.getStats().then(function (data) {
       $scope.plans = data.plans;
       $scope.month = data.month;
-      $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+      $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
     });
   };
 
@@ -103,7 +105,7 @@ angular.module('cockpit.controllers')
       CockpitData.getStats().then(function (data) {
         $scope.plans = data.plans;
         $scope.month = data.month;
-        $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+        $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
       });
     } else {
       $scope.chosenView = sub;
@@ -113,7 +115,7 @@ angular.module('cockpit.controllers')
       CockpitData.getSubStats(sub.id).then(function (data) {
         $scope.plans = data.plans;
         $scope.month = data.month;
-        $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+        $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
       });
     }
 
@@ -129,7 +131,7 @@ angular.module('cockpit.controllers')
   CockpitData.getStats().then(function (data) {
     $scope.plans = data.plans;
     $scope.month = data.month;
-    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
   });
 
   // Commission
@@ -143,7 +145,7 @@ angular.module('cockpit.controllers')
 
   CockpitData.getAgentCommission().then(function (data) {
     $scope.comm = data;
-    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm d. M. YYYY');
+    $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
   });
 
   $scope.showCommDetail = function() {
