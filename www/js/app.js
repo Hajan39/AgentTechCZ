@@ -285,22 +285,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       }
     })
 
-  .state('tab.sc-nc', {
-      url: '/sc-nc',
+  .state('tab.sms-scoring', {
+      url: '/sms-scoring',
       views: {
-        'tab-sc-nc': {
-          templateUrl: 'templates/scoring.new.html',
-          controller: 'ScNcCtrl'
-        }
-      }
-    })
-
-  .state('tab.sc-res', {
-      url: '/sc-res',
-      views: {
-        'tab-sc-res': {
-          templateUrl: 'templates/tab-sc-res.html',
-          controller: 'ScResCtrl'
+        'tab-sms-scoring': {
+          templateUrl: 'templates/sms/scoring.html',
+          controller: 'SmsScoringCtrl'
         }
       }
     })

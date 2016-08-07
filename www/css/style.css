@@ -5,13 +5,13 @@
 	color: white;
 }
 
-
+/*
 .button-bar > .button:last-child {
   border-radius: 0px 20px 20px 0px !important;
 }
 .button-bar > .button:first-child {
     border-radius: 20px 0px 0px 20px !important;
-}
+}*/
 
 /** Styling for the username field **/
 label.item.has-error {

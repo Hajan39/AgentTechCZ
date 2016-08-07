@@ -1,0 +1,135 @@
+<ion-view view-title="Skóring">
+  <ion-content>
+    <div class="list">
+      <ion-radio ng-repeat="item in scList" ng-value="item.value" ng-model="sc.type" name="type">{{item.text}}</ion-radio>
+      <div class="item item-divider">
+        Osobní údaje
+      </div>
+      <label class="item item-input" ng-show="sc.type == 'NC'">
+        <span class="input-label">Rodné číslo</span>
+        <input type="number" ng-model="sc.pin">
+      </label>
+      <label class="item item-input" ng-show="sc.type == 'RES'">
+        <span class="input-label">Číslo zákazníka</span>
+        <input type="text" ng-model="sc.cid">
+      </label>
+      <label class="item item-input" ng-show="sc.type == 'NC'">
+        <span class="input-label">Jméno</span>
+        <input type="text" ng-model="sc.firstName">
+      </label>
+      <label class="item item-input" ng-show="sc.type == 'NC'">
+        <span class="input-label">Příjmení</span>
+        <input type="text" ng-model="sc.lastName">
+      </label>
+      <label class="item item-input" ng-show="sc.type == 'NC'">
+        <span class="input-label">Telefonní číslo</span>
+        <input type="text" placeholder="606123456" ng-model="sc.phone">
+      </label>
+      <div class="item item-divider">
+        Finanční údaje
+      </div>
+      <label class="item item-input">
+        <span class="input-label">Měsíční fixní příjem</span>
+        <input type="number" ng-model="sc.tmfi"required>
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Měsíční splátky</span>
+        <input type="number" ng-model="sc.tmvi"required>
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Požadovaná výše půjčky</span>
+        <input type="number" placeholder="nepovinný údaj" ng-model="sc.req">
+      </label>
+      <div class="item item-divider" ng-show="sc.type == 'NC'">
+        Doklad totožnosti
+      </div>
+      <div class="button-bar padding" ng-show="sc.type == 'NC'">
+        <a grouped-radio="'OP'" ng-model="sc.idt">Občanský průkaz</a>
+        <a grouped-radio="'PP'" ng-model="sc.idt">Povolení k pobytu</a>
+      </div>
+      <label class="item item-input" ng-show="sc.type == 'NC'">
+        <span class="input-label">Číslo dokladu</span>
+        <input type="text" ng-model="sc.idn">
+      </label>
+      <div class="item item-divider" ng-show="sc.type == 'NC'">
+        Druh zaměstnání
+      </div>
+      <ion-radio ng-show="sc.type == 'NC'" ng-repeat="item in empList" ng-value="item.value" ng-model="sc.emp" name="emp">{{item.text}}</ion-radio>
+      <div class="item item-divider" ng-show="sc.type == 'NC'">
+        Druh bydlení
+      </div>
+      <ion-radio ng-show="sc.type == 'NC'" ng-repeat="item in livList" ng-value="item.value" ng-model="sc.liv" name="liv">{{item.text}}</ion-radio>
+      <div class="item item-divider">
+        Credit Bureau
+      </div>
+      <div class="button-bar padding">
+        <a grouped-radio="'a'" ng-model="sc.cb">Ano</a>
+        <a grouped-radio="'n'" ng-model="sc.cb">Ne</a>
+        <a grouped-radio="'i'" ng-model="sc.cb">Info</a>
+      </div>
+      <div class="item item-divider" ng-show="sc.type == 'NC'">
+        Bankovní účet
+      </div>
+      <div class="button-bar padding" ng-show="sc.type == 'NC'">
+        <a grouped-radio="'a'" ng-model="sc.bank">Ano</a>
+        <a grouped-radio="'n'" ng-model="sc.bank">Ne</a>
+      </div>
+      <div class="item item-divider" ng-show="sc.type == 'NC'">
+        Majitel auta
+      </div>
+      <div class="button-bar padding" ng-show="sc.type == 'NC'">
+        <a grouped-radio="'a'" ng-model="sc.car">Ano</a>
+        <a grouped-radio="'n'" ng-model="sc.car">Ne</a>
+      </div>
+      <div class="item item-divider" ng-show="sc.type == 'NC'">
+        Počet dětí
+      </div>
+      <ion-radio ng-show="sc.type == 'NC'" ng-repeat="item in childList" ng-value="item.value" ng-model="sc.chi" name="chi">{{item.text}}</ion-radio>
+      <div class="item item-divider">
+        Zelená linka / Žádosti o půjčku
+      </div>
+      <label class="item item-input">
+        <span class="input-label">Lead ID (LID)</span>
+        <input type="number" placeholder="nepovinný údaj, opište z LOAN SMS" ng-model="sc.id">
+      </label>
+      <button class="item button button-block button-positive" ng-click="score(sc)">
+        Skórovat
+      </button>
+    </div>
+  </ion-content>
+</ion-view> <!--
+</div>
+</ul>
+</div>
+<div class="item item-body">
+<div class="list">
+<label class="item item-input item-select">
+<div class="input-label">
+Počet dětí
+</div>
+<select ng-model="sc.chi">
+<option value="0" selected>0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6+</option>
+</select>
+</label>
+<label class="item item-input">
+<span class="input-label">ID Žádosti</span>
+<input type="text" placeholder="ID leadu" ng-model="sc.id"required>
+</label>
+<label class="item item-input">
+<span class="input-label">Půjčka</span>
+<input type="number" placeholder="Výše požadované půjčky" ng-model="sc.req">
+</label>
+</div>
+<button class="button button-block button-positive" ng-click="score(sc)">
+Skórovat
+</button>
+</div>
+</ion-content>
+</ion-view>
+-->
