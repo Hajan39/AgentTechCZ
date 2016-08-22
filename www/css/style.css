@@ -5,6 +5,21 @@
 	color: white;
 }
 
+.background.scroll-content{
+	background: url('../img/bg.jpg') no-repeat;
+	background-size: cover;
+	background-position: center;
+	margin: auto;
+	z-index: 2;
+}
+
+.tr-card {
+background: rgba(173, 218, 67, 0);
+}
+
+.ntr-card {
+background: white
+}
 /*
 .button-bar > .button:last-child {
   border-radius: 0px 20px 20px 0px !important;
@@ -41,4 +56,29 @@ label.item.valid-lr {
 
 small {
   color: #777;
+}
+
+* {
+		font-family: 'gothamroundedlight', 'Helvetica', sans-serif !important;
+}
+
+body {
+  cursor: url('http://ionicframework.com/img/finger.png'), auto;
+}
+
+/*
+ * http://docs.angularjs.org/api/ng/directive/ngShow#usage_animations
+ */
+.list .item.item-accordion {
+  line-height: 38px;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: 0.09s all linear;
+}
+.list .item.item-accordion.ng-hide {
+  line-height: 0px;
+}
+.list .item.item-accordion.ng-hide-add,
+.list .item.item-accordion.ng-hide-remove {
+  display: block !important;
 }

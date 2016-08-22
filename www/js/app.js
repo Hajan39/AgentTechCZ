@@ -77,7 +77,7 @@ angular.module('cockpit.controllers', ['ionic', 'ngCordova', 'cockpit.services']
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'ngCordova', 'cockpit.services', 'cockpit.controllers'])
+angular.module('starter', ['ionic', 'starter.services', 'ngCordova', 'cockpit.services', 'cockpit.controllers'])
 
 .run(function($ionicPlatform, $rootScope, $state, $localstorage, $cordovaGoogleAnalytics, $ionicHistory, UserData) {
   $ionicPlatform.ready(function() {
@@ -243,43 +243,63 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     views: {
       'tab-product': {
         templateUrl: 'templates/product/home.html',
-        controller: 'AgCtrl'
+        controller: 'ProductHomeCtrl'
       }
     }
   })
-    .state('tab.product1', {
-      url: '/product1/:discount/:type/:term/:issue',
+  .state('tab.issue', {
+    url: '/issue',
+    views: {
+      'tab-product': {
+        templateUrl: 'templates/product/issue.html',
+        controller: 'ProductIssueCtrl'
+      }
+    }
+  })
+  .state('tab.repay', {
+    url: '/repay',
+    views: {
+      'tab-product': {
+        templateUrl: 'templates/product/repay.html',
+        controller: 'ProductRepayCtrl'
+      }
+    }
+  })
+
+    .state('tab.sli', {
+      url: '/product-sli/:key/:issue',
       views: {
         'tab-product': {
-          templateUrl: 'templates/product-step1.html',
-          controller: 'Product1Ctrl'
+          templateUrl: 'templates/product/sli.html',
+          controller: 'ProductSilCtrl'
         }
       }
     })
-    .state('tab.product2', {
-      url: '/product2/:discount/:type/:term/:issue',
-      views: {
-        'tab-product': {
-          templateUrl: 'templates/product-step2.html',
-          controller: 'Product1Ctrl'
+
+      .state('tab.ag', {
+        url: '/product-ag/:key/:issue',
+        views: {
+          'tab-product': {
+            templateUrl: 'templates/product/contract.html',
+            controller: 'ProductAgCtrl'
+          }
         }
-      }
-    })
+      })
     .state('tab.table', {
-      url: '/table/:discount/:type/:term/',
+      url: '/table/:key',
       views: {
         'tab-product': {
-          templateUrl: 'templates/product-table.html',
+          templateUrl: 'templates/product/table.html',
           controller: 'ProductTableCtrl'
         }
       }
     })
 
-  .state('tab.ptp', {
-      url: '/ptp',
+  .state('tab.sms-ptp', {
+      url: '/sms-ptp',
       views: {
-        'tab-ptp': {
-          templateUrl: 'templates/tab-ptp.html',
+        'tab-sms-ptp': {
+          templateUrl: 'templates/sms/ptp.html',
           controller: 'PtpCtrl'
         }
       }
@@ -289,18 +309,18 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       url: '/sms-scoring',
       views: {
         'tab-sms-scoring': {
-          templateUrl: 'templates/scoring.html',
+          templateUrl: 'templates/sms/scoring.html',
           controller: 'SmsScoringCtrl'
         }
       }
     })
 
-  .state('tab.friends', {
-      url: '/friends',
+  .state('tab.sms-sale', {
+      url: '/sms-sale',
       views: {
-        'tab-friends': {
-          templateUrl: 'templates/tab-friends.html',
-          controller: 'FriendsCtrl'
+        'tab-sms-sale': {
+          templateUrl: 'templates/sms/sale.html',
+          controller: 'SaleCtrl'
         }
       }
     })

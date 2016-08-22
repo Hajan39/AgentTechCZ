@@ -1,5 +1,75 @@
 angular.module('cockpit.controllers')
 
+.controller('SaleCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics, PRODUCTS) {
+  $scope.sc = {
+      cat: '',
+      ref: 'n'
+  };
+
+  $scope.updateView = function () {
+    $scope.catList = [];
+    $scope.termList = [];
+    $scope.sc.group = $scope.sc.cat == '' ? '' : ($scope.sc.cat.substring(0, 1) == 'M' ? 'MT' : 'HC');
+    $.each(PRODUCTS.categories, function(catKey, products) {
+      $scope.catList.push({text: catKey, value: catKey});
+      $.each(products, function(prodKey, product) {
+        if ($scope.sc.cat == catKey) {
+          $scope.termList.push({text: product.term + ' ' + (product.termType == 'MO' ? 'měsíců' : 'týdnů'), value: product.term});
+        }
+      });
+    });
+    $scope.computedPaidOutValue = ($scope.sc.issueValue ? $scope.sc.issueValue : 0) - ($scope.sc.refValue ? $scope.sc.refValue : 0);
+    console.log($scope.computedPaidOutValue);
+  };
+  $scope.updateView();
+
+  $scope.payHc = function(data) {
+      $ionicLoading.show();
+      console.log(data);
+      var month = data.date.getMonth() + 1;
+      var year = data.date.getFullYear();
+      if (month == 13) {
+        month = 1;
+        year += 1;
+      }
+
+      if (data.pin == null || data.paidOutValue == null || data.date == null || data.term == null) {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Prodej nelze nahlásit.<br><small>Zkontrolujte, že jste vyplnili všechny povinné parametry.</small>'
+        });
+      }
+
+      var text = "#PVYP;rc" + data.pin.toString() +
+        ";d" + data.date.getDate() + "." + month + "." + year
+        + ";v" + data.paidOutValue.toString()
+        + ";s" + data.term.toString()
+        + ";tH";
+
+      $cordovaSms.send('+420606999008', text)
+        .then(function() {
+          $ionicLoading.hide();
+          $cordovaGoogleAnalytics.trackEvent('SMS', 'Sales');
+          $ionicPopup.alert({
+            title: 'SMS',
+            template: 'Prodejní SMS odeslána.<br><small>Dobrá práce!</small>'
+          });
+          $state.go('tab.dash');
+          $scope.sc = {
+              cat: '',
+              ref: 'n'
+          };
+        }, function() {
+          $ionicLoading.hide();
+          $ionicPopup.alert({
+            title: 'SMS',
+            template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
+          });
+        });
+    };
+})
+
 .controller('SmsScoringCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
   $scope.sc = {
     type: 'NC',
@@ -71,8 +141,8 @@ angular.module('cockpit.controllers')
   };
 
   $scope.score = function (data) {
-    if ((data.type == 'NC' && validate([data.pin, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih]))
-      || (data.type == 'RES' && validate([data.cid, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih]))) {
+    if ((data.type == 'NC' && !validate([data.pin, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih]))
+      || (data.type == 'RES' && !validate([data.cid, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih]))) {
       $ionicPopup.alert({
         title: 'SMS',
         template: 'Skóring nelze odeslat.<br><small>Zkontrolujte, že jste vyplnili všechny povinné parametry.</small>'
@@ -140,6 +210,15 @@ angular.module('cockpit.controllers')
             title: 'SMS',
             template: 'Skóring odeslán.<br><small>Odpověď vám přijde v SMS zprávě.</small>'
           });
+          $scope.sc = {
+            type: 'NC',
+            req: null,
+            id: null,
+            emp: 'PU',
+            idt: 'OP',
+            liv: 'VL',
+            chi: '0',
+          };
           $state.go('tab.dash');
         }, function() {
           $ionicLoading.hide();
@@ -157,5 +236,47 @@ angular.module('cockpit.controllers')
           template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
         });
       }
+  };
+})
+
+.controller('PtpCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
+  $scope.ptp = function (data) {
+    $ionicLoading.show();
+
+    if (data.fr == null || data.pay == null || data.cid == null) {
+      $ionicLoading.hide();
+      $ionicPopup.alert({
+        title: 'SMS',
+        template: 'Dohodu nelze odeslat.<br><small>Zkontrolujte, že jste vyplnili všechny povinné parametry.</small>'
+      });
+    }
+
+    var text = "#DO#" + data.cid.toString() +
+      "#" + data.fr.toString() + '#' +
+      data.pay.toString() + '#' + moment(data.end).format('DDMMYYYY') + '#'
+      ;
+
+    $cordovaSms.send('+420606999008', text)
+      .then(function() {
+        $ionicLoading.hide();
+        $cordovaGoogleAnalytics.trackEvent('SMS', 'PTP');
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Dohoda vytvořena.'
+        });
+        $state.go('tab.dash');
+        $scope.sc = {
+          fr: 'J'
+        };
+      }, function() {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'SMS se nepodařilo odeslat.<br><small>Zkontrolujte údaje, příp. kontaktuje IT helpdesk.</small>'
+        });
+      });
+  };
+  $scope.sc = {
+    fr: 'J'
   };
 })

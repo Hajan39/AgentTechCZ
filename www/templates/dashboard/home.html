@@ -1,83 +1,88 @@
 <ion-view view-title="OZ Cockpit" cache-view="false">
-  <ion-content class="padding">
-  <ion-refresher
-    pulling-text="Obnovit..."
-    on-refresh="doSoftRefresh()">
-  </ion-refresher>
-  <img src="img/logo.png" width="100%" on-double-tap="doLogout()" />
-  <div ng-show="user.uniqueId !== null">
-    <div class="list card">
-      <div class="item item-divider">Vítejte, {{user.firstName}} {{user.lastName}}</div>
-      <div class="item item-body">
-        <div ng-show="chosenView.id === null && user.role == 'AG'">
-          Agentura <b>{{user.agencyId.toString() | agencyId}}</b>, na pobočce <b>{{user.branch}}</b>.
+    <ion-content class="padding" ng-show="user.uniqueId !== null">
+        <ion-refresher pulling-text="Obnovit..." on-refresh="doSoftRefresh()">
+        </ion-refresher>
+        <div>
+            <div class="list card">
+                <div class="item item-body">
+                    <div class="row">
+                        <div class="col center text-center" width="100%">
+                            <img src="img/icons/faces.png" width="80px" height="80px" class="center-block" on-double-tap="doLogout()" style="margin: 0px; padding: 8px;" />
+                        </div>
+                        <div class="col center text-center">
+                            <h2 style="margin-top: 0px; margin-bottom: 5px; color: rgb(0, 172, 233)">{{user.firstName}} {{user.lastName}}</h2>
+                            <div ng-show="chosenView.id === null && user.role == 'AG'">
+                                Agentura: <b>{{user.agencyId.toString() | agencyId}}</b>
+                                <br /> Pobočka: <b>{{user.branch}}</b>
+                            </div>
+                            <div ng-show="chosenView.id === null && user.role == 'BR'">
+                                Sekce: <b>{{user.sectionLetter}}</b>
+                                <br /> Pobočka: <b>{{user.branch}}</b>
+                            </div>
+                            <div ng-show="chosenView.id !== null">
+                                Zobrazen <b>{{chosenView.roleDescription}}</b>
+                            </div>
+                            <div ng-show="subs.length > 0">
+                                <hr />
+                                <div style="font-size: smaller; text-align: center; color: #aaa" ng-click="showSubFilter($event)"><i>změnit zobrazení</i></div>
+                                <br ng-show="chosenView.id !== null" />
+                                <div style="font-size: smaller; text-align: center; color: #aaa" ng-show="chosenView.id !== null" ng-click="resetSubFilter()"><i>zpět</i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div lass="list card" ng-show="comm.weekId > 0 && !commDetail.show" ng-click="showCommDetail()">
+                <div class="item item-divider item-positive">Provize na týden {{comm.weekId.toString() | weekId}}</div>
+                <div class="item item-body">
+                    <div class="row">
+                        <div class="col center" style="font-size: bigger; text-align: center;"><strong>{{comm.amount | number:0}} Kč</strong></div>
+                    </div>
+                    <div style="font-size: smaller; text-align: center; color: #aaa"><i>zobrazit více</i></div>
+                </div>
+            </div>
+            <div lass="list card" ng-show="comm.weekId > 0 && commDetail.show">
+                <div class="item item-divider item-positive">Provize na týden {{commDetail.weekId.toString() | weekId}}</div>
+                <div class="item item-body">
+                    <div class="row">
+                        <div class="col" style="font-size: bigger;"><strong>Celková provize</strong></div>
+                        <div class="col" style="font-size: bigger; text-align: right; vertical-align: middle;"><strong ng-class="{red: commDetail.totalAmount < 0}">{{commDetail.totalAmount | number:0}} Kč</strong></div>
+                    </div>
+                    <div class="row" ng-repeat="row in commDetail.comm">
+                        <div class="col" style="font-size: bigger;">{{row.typeName}}</div>
+                        <div class="col" style="font-size: bigger; text-align: right; vertical-align: middle;"><strong ng-class="{red: row.amount < 0}">{{row.amount | number:0}} Kč</strong></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="button button-calm button-full button-outline" ng-click="doPreviousWeek()" ng-show="commDetail.showPreviousWeek">předchozí týden</button>
+                        </div>
+                        <div class="col">
+                            <button class="button button-calm button-full button-outline" ng-click="doNextWeek()" ng-show="commDetail.showNextWeek">další týden</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="list card" ng-show="plans.length">
+                    <div class="item item-divider item-balanced">Obchodní výsledky {{month | monthId}}</div>
+                    <div class="item item-body">
+                        <div class="row">
+                            <div class="col"></div>
+                            <div class="col"><b>Plán</b></div>
+                            <div class="col"><b>Skutečnost</b></div>
+                        </div>
+                        <div class="row" ng-repeat="plan in plans">
+                            <div class="col" style="font-size: bigger;">{{plan.desc}}</div>
+                            <div class="col" style="font-size: bigger;">{{plan.plan | number:0}}</div>
+                            <div class="col" style="font-size: bigger;">{{plan.reality | number:0}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="font-size: smaller; text-align: center; color: #aaa" ng-click="doRefresh()"><i>aktualizováno {{lastUpdate}}</i></div>
         </div>
-        <div ng-show="chosenView.id === null && user.role == 'BR'">
-          Sekce <b>{{user.sectionLetter}}</b>, na pobočce <b>{{user.branch}}</b>.
-        </div>
-        <div ng-show="chosenView.id !== null">
-          Zobrazena data pro <b>{{chosenView.roleDescription}}</b>.
-        </div>
-        <div ng-show="subs.length > 0">
-          <hr />
-          <div style="font-size: smaller; text-align: center; color: #aaa" ng-click="showSubFilter($event)"><i>změnit zobrazení</i></div>
-          <br ng-show="chosenView.id !== null" />
-          <div style="font-size: smaller; text-align: center; color: #aaa" ng-show="chosenView.id !== null" ng-click="resetSubFilter()"><i>zpět</i></div>
-        </div>
-      </div>
-    </div>
-    <div lass="list card" ng-show="comm.weekId > 0 && !commDetail.show" ng-click="showCommDetail()">
-      <div class="item item-divider bar-positive">Provize na týden {{comm.weekId.toString() | weekId}}</div>
-      <div class="item item-body">
-        <div class="row">
-          <div class="col center" style="font-size: bigger; text-align: center;"><strong>{{comm.amount | number:0}} Kč</strong></div>
-        </div>
-        <div style="font-size: smaller; text-align: center; color: #aaa"><i>zobrazit více</i></div>
-      </div>
-    </div>
-    <div lass="list card" ng-show="comm.weekId > 0 && commDetail.show">
-      <div class="item item-divider">Provize na týden {{commDetail.weekId.toString() | weekId}}</div>
-      <div class="item item-body">
-          <div class="row">
-            <div class="col" style="font-size: bigger;"><strong>Celková provize</strong></div>
-            <div class="col" style="font-size: bigger; text-align: right; vertical-align: middle;"><strong ng-class="{red: commDetail.totalAmount < 0}">{{commDetail.totalAmount | number:0}} Kč</strong></div>
-          </div>
-          <div class="row" ng-repeat="row in commDetail.comm">
-            <div class="col" style="font-size: bigger;">{{row.typeName}}</div>
-            <div class="col" style="font-size: bigger; text-align: right; vertical-align: middle;"><strong ng-class="{red: row.amount < 0}">{{row.amount | number:0}} Kč</strong></div>
-          </div>
-          <div class="row">
-            <div class="col"><button class="button button-calm button-full button-outline" ng-click="doPreviousWeek()" ng-show="commDetail.showPreviousWeek">předchozí týden</button></div>
-            <div class="col"><button class="button button-calm button-full button-outline" ng-click="doNextWeek()" ng-show="commDetail.showNextWeek">další týden</button></div>
-          </div>
-      </div>
-    </div>
-    <div>
-      <div class="list card" ng-show="plans.length">
-        <div class="item item-divider bar-positive">Obchodní výsledky {{month | monthId}}</div>
-        <div class="item item-body">
-          <div class="row">
-            <div class="col"></div>
-            <div class="col"><b>Plán</b></div>
-            <div class="col"><b>Skutečnost</b></div>
-          </div>
-          <div class="row" ng-repeat="plan in plans">
-            <div class="col" style="font-size: bigger;">{{plan.desc}}</div>
-            <div class="col" style="font-size: bigger;">{{plan.plan | number:0}}</div>
-            <div class="col" style="font-size: bigger;">{{plan.reality | number:0}}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div style="font-size: smaller; text-align: center; color: #aaa" ng-click="doRefresh()"><i>aktualizováno {{lastUpdate}}</i></div>
-    </div>
-    <div ng-show="user.uniqueId === null">
-      <div class="bar bar-royal">
-        <h1 class="title">Probíhá načítání</h1>
-      </div>
-      <p>
-        Pro načtení obrazovky je nutné připojení k internetu.
-      </p>
-    </div>
-  </ion-content>
+    </ion-content>
+    <ion-content class="padding background" ng-show="user.uniqueId === null" scroll="false">
+        <img src="img/logo.png" style="margin-left: auto; margin-right: auto; display: block;" class="center text-center" width="100%" />
+    </ion-content>
 </ion-view>

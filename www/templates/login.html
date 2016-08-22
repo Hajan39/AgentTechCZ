@@ -1,7 +1,8 @@
 <ion-view view-title="Agent Cockpit">
-  <ion-content class="padding">
-    <div class="list">
-      <div class="card">
+    <ion-content class="padding background" scroll="false">
+        <img src="img/logo.png" width="100%" />
+        <div class="list">
+            <!-- <div class="card">
         <div class="item item-divider">Přihlášení</div>
         <div class="item item-body">
           <div>Tato aplikace slouží pouze pro obchodní zástupce a zaměstnance společnosti <b>Provident Financial</b>.</div>
@@ -15,42 +16,40 @@
             <div>Opište prosím SMS kód pro ověření.</div>
             <p>SMS kód vám dorazí na telefonní číslo, které máte vedeno v systému FOCUS.</p>
           </div>
+        </div> -->
         </div>
-    </div>
-  <div class="item item-divider" ng-show="phase === 1">Přihlášení</div>
-    <div class="item item-body" ng-show="phase === 1">
-      <div class="list">
-        <label class="item item-input">
-          <span class="input-label">Osobní číslo</span>
-          <input type="number" placeholder="123456" ng-model="lg.personalNumber" required />
-        </label>
-        <label class="item item-input">
-          <span class="input-label">Telefonní číslo</span>
-          <input type="number" placeholder="606123456" ng-model="lg.phoneNumber" required />
-        </label>
-      </div>
-        <button class="button button-block button-positive" ng-click="phase1(lg)">
-          Přihlásit
-        </button>
-    </div>
-  </div>
-<div class="item item-divider" ng-show="phase === 2">Přihlášení</div>
-  <div class="item item-body" ng-show="phase === 2">
-    <div class="list">
-      <label class="item item-input">
-        <span class="input-label">SMS kód</span>
-        <input type="number" placeholder="123456" ng-model="sms.code" required />
-      </label>
-    </div>
-      <button class="button button-block button-positive" ng-click="phase2(sms)">
-        Přihlásit
-      </button>
-        <button class="button button-block button-small" ng-click="backToPhase1()">
-          Zpět
-        </button>
-  </div>
-</div>
-  </div>
-  </form>
-  </ion-content>
+        <div class="item item-body tr-card" ng-show="phase === 1">
+            <div class="list">
+                <label class="item item-input ntr-card">
+                    <span class="input-label">Osobní číslo</span>
+                    <input type="number" placeholder="123456" ng-model="lg.personalNumber" required />
+                </label>
+                <label class="item item-input ntr-card">
+                    <span class="input-label">Telefonní číslo</span>
+                    <input type="number" placeholder="606123456" ng-model="lg.phoneNumber" required />
+                </label>
+            </div>
+            <button class="button button-block button-positive ntr-card" ng-click="phase1(lg)">
+                Přihlásit
+            </button>
+        </div>
+        </div>
+        <div class="item item-body tr-card" ng-show="phase === 2">
+            <div class="list">
+                <label class="item item-input ntr-card">
+                    <span class="input-label">SMS kód</span>
+                    <input type="number" placeholder="123456" ng-model="sms.code" required />
+                </label>
+            </div>
+            <button class="button button-block button-positive ntr-card" ng-click="phase2(sms)">
+                Přihlásit
+            </button>
+            <button class="button button-block button-small ntr-card" ng-click="backToPhase1()">
+                Zpět
+            </button>
+        </div>
+        </div>
+        </div>
+        </form>
+    </ion-content>
 </ion-view>

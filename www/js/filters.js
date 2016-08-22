@@ -17,12 +17,27 @@ angular.module('starter')
       });
 
       scope.$watch('model', function(newVal) {
-        element.removeClass('button-positive');
+        element.removeClass('button-balanced');
         if (newVal === scope.value) {
-          element.addClass('button-positive');
+          element.addClass('button-balanced');
         }
       });
     }
+  };
+})
+
+.filter('termType', function() {
+  return function(type) {
+    if (type == 'MO') return 'měsíců';
+    else return 'týdnů';
+  };
+})
+
+.filter('termType2', function() {
+  return function(type) {
+    console.log(type);
+    if (type == 'MO') return 'měsíčně';
+    else return 'týdně';
   };
 })
 
@@ -44,7 +59,7 @@ angular.module('starter')
   return function(id) {
     if (id == null || id == undefined) return '';
     id = id.toString();
-    return id.length == 6 ? id.substring(0, 4) + '/' + id.substring(4) : id;
+    return id.length == 6 ? id.substring(4) + '/' + id.substring(0, 4) : id;
   };
 })
 

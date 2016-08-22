@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.provident.agent.cz" version="2.7.3" android-versionCode="3000022" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>OZ Cockpit CZ</name>
+<widget id="com.provident.agent.cz" version="3.0.0.25" android-versionCode="3000025" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>OZ Cockpit</name>
   <description>
         Aplikace pro podporu obchodních zástupců společnosti Provident Financial.
     </description>
@@ -20,6 +20,7 @@
   <preference name="BackupWebStorage" value="none"/>
   <preference name="SplashScreen" value="screen"/>
   <preference name="SplashScreenDelay" value="3000"/>
+  <preference name="Orientation" value="portrait"/>
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>

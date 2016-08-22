@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'gothamroundedlight';
+    src: url('fonts/gothamroundedlight.eot');
+    src: url('fonts/gothamroundedlight.eot') format('embedded-opentype'),
+         url('fonts/gothamroundedlight.woff2') format('woff2'),
+         url('fonts/gothamroundedlight.woff') format('woff'),
+         url('fonts/gothamroundedlight.ttf') format('truetype'),
+         url('fonts/gothamroundedlight.svg#gothamroundedlight') format('svg');
+}

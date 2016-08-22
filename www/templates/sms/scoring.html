@@ -2,7 +2,7 @@
   <ion-content>
     <div class="list">
       <ion-radio ng-repeat="item in scList" ng-value="item.value" ng-model="sc.type" name="type">{{item.text}}</ion-radio>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Osobní údaje
       </div>
       <label class="item item-input" ng-show="sc.type == 'NC'">
@@ -23,9 +23,9 @@
       </label>
       <label class="item item-input">
         <span class="input-label">Telefonní číslo</span>
-        <input type="text" placeholder="606123456" ng-model="sc.phone">
+        <input type="text" placeholder="420606123456" ng-model="sc.phone">
       </label>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Finanční údaje
       </div>
       <label class="item item-input">
@@ -50,9 +50,9 @@
       </label>
       <label class="item item-input">
         <span class="input-label">Požadovaná výše půjčky</span>
-        <input type="number" placeholder="nepovinný údaj" ng-model="sc.req">
+        <input type="number" ng-model="sc.req" required>
       </label>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Doklad totožnosti
       </div>
       <div class="button-bar padding">
@@ -63,23 +63,23 @@
         <span class="input-label">Číslo dokladu</span>
         <input type="text" ng-model="sc.idn">
       </label>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Druh zaměstnání
       </div>
       <ion-radio ng-repeat="item in empList" ng-value="item.value" ng-model="sc.emp" name="emp">{{item.text}}</ion-radio>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Druh bydlení
       </div>
       <ion-radio ng-repeat="item in livList" ng-value="item.value" ng-model="sc.liv" name="liv">{{item.text}}</ion-radio>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Rodinný stav
       </div>
       <ion-radio ng-repeat="item in maritalList" ng-value="item.value" ng-model="sc.mar" name="mar">{{item.text}}</ion-radio>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Dosažené vzdělání
       </div>
       <ion-radio ng-repeat="item in educationList" ng-value="item.value" ng-model="sc.edu" name="edu">{{item.text}}</ion-radio>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Credit Bureau
       </div>
       <div class="button-bar padding">
@@ -87,69 +87,34 @@
         <a grouped-radio="'n'" ng-model="sc.cb">Ne</a>
         <a grouped-radio="'i'" ng-model="sc.cb">Info</a>
       </div>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Bankovní účet
       </div>
       <div class="button-bar padding">
         <a grouped-radio="'a'" ng-model="sc.bank">Ano</a>
         <a grouped-radio="'n'" ng-model="sc.bank">Ne</a>
       </div>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Majitel auta
       </div>
       <div class="button-bar padding">
         <a grouped-radio="'a'" ng-model="sc.car">Ano</a>
         <a grouped-radio="'n'" ng-model="sc.car">Ne</a>
       </div>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Počet dětí
       </div>
       <ion-radio ng-repeat="item in childList" ng-value="item.value" ng-model="sc.chi" name="chi">{{item.text}}</ion-radio>
-      <div class="item item-divider">
+      <div class="item item-divider item-positive">
         Zelená linka / Žádosti o půjčku
       </div>
       <label class="item item-input">
         <span class="input-label">Lead ID (LID)</span>
         <input type="number" placeholder="nepovinný údaj, opište z LOAN SMS" ng-model="sc.id">
       </label>
-      <button class="item button button-block button-positive" ng-click="score(sc)">
+      <button class="item button button-block button-balanced" ng-click="score(sc)">
         Skórovat
       </button>
     </div>
   </ion-content>
-</ion-view> <!--
-</div>
-</ul>
-</div>
-<div class="item item-body">
-<div class="list">
-<label class="item item-input item-select">
-<div class="input-label">
-Počet dětí
-</div>
-<select ng-model="sc.chi">
-<option value="0" selected>0</option>
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-<option value="6">6+</option>
-</select>
-</label>
-<label class="item item-input">
-<span class="input-label">ID Žádosti</span>
-<input type="text" placeholder="ID leadu" ng-model="sc.id"required>
-</label>
-<label class="item item-input">
-<span class="input-label">Půjčka</span>
-<input type="number" placeholder="Výše požadované půjčky" ng-model="sc.req">
-</label>
-</div>
-<button class="button button-block button-positive" ng-click="score(sc)">
-Skórovat
-</button>
-</div>
-</ion-content>
 </ion-view>
--->

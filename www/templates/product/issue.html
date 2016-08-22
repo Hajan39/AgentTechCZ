@@ -1,0 +1,46 @@
+<ion-view view-title="Produktová tabulka">
+  <ion-content>
+
+    <div class="row">
+      <div class="col center text-center">
+        <button class="item button button-block button-stable" ng-click="goToHome()">
+          Vyhledat podle <strong>typu produktu</strong>
+        </button>
+        <button class="item button button-block button-stable" ng-click="goToRepay()">
+          Vyhledat podle výše <strong>splátky</strong>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="list" style="width: 100%">
+        <label class="item item-input item-stacked-label">
+          <span class="input-label">Výše půjčky</span>
+          <input type="number" ng-model="issueValue">
+        </label>
+        <div class="item range range-positive">
+          <i class="icon ion-ios-sunny-outline"></i>
+          <input type="range" min="1000" max="130000" ng-model="issueRanger.issue" step="1000" ng-model-options="{ getterSetter: true }" ng-change="changeIssueValue()">
+          <i class="icon ion-ios-sunny"></i>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <ion-list style="width: 100%">
+        <div ng-repeat="cat in productCategories">
+          <ion-item ng-click="toggleProductCategory(cat)"
+            ng-class="{active: isProductCategoryShown(cat), 'item-balanced': cat.name.substring(0, 1) == 'Z', 'item-positive': cat.name.substring(0, 1) == 'M'}">
+            <i class="icon" ng-class="isProductCategoryShown(cat) ? 'ion-minus' : 'ion-plus'"></i>
+            &nbsp;
+            {{cat.issue | number}} Kč za {{cat.cleanRepay | number}} Kč {{cat.termType | termType2}}
+            <br />{{cat.name}}
+          </ion-item>
+          <ion-item class="item-accordion" ng-repeat="prod in cat.products" ng-show="isProductCategoryShown(cat)" ng-click="showProduct(prod)">
+            {{prod.name}}<br />
+            <strong>{{prod.issue | number}} Kč na {{prod.term}} {{prod.termType | termType}}</strong><br />
+            {{prod.cleanRepay | number}} Kč {{cat.termType | termType2}}
+          </ion-item>
+        </div>
+      </ion-list>
+    </div>
+  </ion-content>
+</ion-view>

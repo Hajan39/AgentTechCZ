@@ -1,0 +1,53 @@
+<ion-view view-title="Standardní informace">
+  <ion-content class="padding">
+    <div class="list">
+        <span class="item">
+            Celková výše spotřebitelského úvěru
+            <span class="item-note">{{d.totalAmountOfLoan | number}} Kč</span>
+        </span>
+        <span class="item">
+            Doba trvání spotřebitelského úvěru
+            <span class="item-note">{{d.term}} {{instalmentDescription3}}</span>
+        </span>
+        <span class="item">
+            Výše {{instalmentDescription}} splátky
+            <span class="item-note">{{d.weeklyInstallment | number}} Kč</span>
+        </span>
+        <span class="item">
+            Výše poslední {{instalmentDescription}} splátky
+            <span class="item-note">{{d.lastWeeklyInstallment | number}} Kč</span>
+        </span>
+        <span class="item">
+            Celková výše spotřebitelského úvěru
+            <span class="item-note">{{d.totalAmountOfLoan | number}} Kč</span>
+        </span>
+        <span class="item">
+            Celkový poplatek
+            <span class="item-note">{{d.totalFee | number}} Kč</span>
+        </span>
+        <span class="item">
+            Úrok
+            <span class="item-note">{{d.interest | number}} Kč</span>
+        </span>
+        <span class="item">
+            Částka za zpracování{{handlingDescription}}
+            <span class="item-note">{{d.handlingFee | number}} Kč</span>
+        </span>
+        <span class="item">
+            Částka za {{adminDescription}}
+            <span class="item-note">{{d.adminFee | number}} Kč</span>
+        </span>
+        <span class="item">
+            Celková dlužná částka
+            <span class="item-note">{{d.totalDueAmount | number}} Kč</span>
+        </span>
+        <span class="item">
+            RPSN
+            <span class="item-note">{{d.apr}} %</span>
+        </span>
+    </div>
+      <button class="button button-block button-positive" ng-click="continue()">
+        Zobrazit smlouvu
+      </button>
+  </ion-content>
+</ion-view>

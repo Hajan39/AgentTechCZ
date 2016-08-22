@@ -1,54 +1,32 @@
 <ion-view view-title="Produktová tabulka">
-
   <ion-content>
-      <div class="item item-body">
-        <div class="list">
-  <label class="item item-input item-select">
-    <div class="input-label">
-      Doba splácení
+
+    <div class="row">
+      <div class="col center text-center">
+        <button class="item button button-stable button-block" ng-click="goToIssue()">
+          Vyhledat podle výše <strong>půjčky</strong>
+        </button>
+        <button class="item button button-block button-stable" ng-click="goToRepay()">
+          Vyhledat podle výše <strong>splátky</strong>
+        </button>
+      </div>
     </div>
-    <select ng-model="product.term">
-      <option value="WE-12">12 týdnů</option>
-      <option value="WE-45" selected>45 týdnů</option>
-      <option value="WE-60">60 týdnů</option>
-      <option value="WE-100">100 týdnů</option>
-      <option value="MO-3">3 měsíce</option>
-      <option value="MO-10">10 měsíců</option>
-      <option value="MO-15">15 měsíců</option>
-      <option value="MO-22">22 měsíců</option>
-    </select>
-  </label>
-  <label class="item item-input item-select">
-    <div class="input-label">
-      Typ půjčky
+    <div class="row">
+      <ion-list style="width: 100%">
+        <div ng-repeat="cat in productCategories">
+          <ion-item ng-click="toggleProductCategory(cat)"
+            ng-class="{active: isProductCategoryShown(cat), 'item-balanced': cat.name.substring(0, 1) == 'Z', 'item-positive': cat.name.substring(0, 1) == 'M'}">
+            <i class="icon" ng-class="isProductCategoryShown(cat) ? 'ion-minus' : 'ion-plus'"></i>
+            &nbsp;
+            {{cat.name}}
+          </ion-item>
+          <ion-item class="item-accordion" ng-repeat="prod in cat.products" ng-show="isProductCategoryShown(cat)" ng-click="showProductTable(prod)">
+            {{prod.name}}<br />
+            <strong>{{prod.term}} {{prod.termType | termType}}</strong>
+          </ion-item>
+        </div>
+      </ion-list>
     </div>
-    <select ng-model="product.type">
-      <option value="HC">Hotovostní</option>
-      <option value="MT">Bezhotovostní</option>
-    </select>
-  </label>
-  <label class="item item-input item-select">
-    <div class="input-label">
-      Sleva
-    </div>
-    <select ng-model="product.discount">
-      <option selected>S0</option>
-      <option>S2</option>
-    </select>
-  </label>
-</div>
-<div class="list">
-  <label class="item item-input">
-    <span class="input-label">Půjčka</span>
-    <input type="number" placeholder="Výše požadované půjčky" ng-model="product.issue" required>
-  </label>
-  </div>
-      <button class="button button-block button-balanced" ng-click="showSummary(product)">
-        Zobrazit přehled
-      </button>
-      <button class="button button-block button-positive" ng-click="showIssue(product)">
-        Zobrazit smlouvu
-      </button>
-  </div>
+
   </ion-content>
 </ion-view>

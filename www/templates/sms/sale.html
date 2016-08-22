@@ -1,0 +1,84 @@
+<ion-view view-title="Vyplacená půjčka">
+  <ion-content>
+    <div class="list">
+      <ion-radio ng-repeat="item in catList" ng-value="item.value" ng-model="sc.cat" ng-change="updateView()" name="type">{{item.text}}</ion-radio>
+      <div class="item item-divider item-positive" ng-show="sc.group == 'MT'">
+        Údaje o půjčce na účet
+      </div>
+      <label class="item item-input" ng-show="sc.group == 'MT'">
+        <span class="input-label">ID skóringu</span>
+        <input type="number" ng-model="sc.scoringId" required>
+      </label>
+      <label class="item item-input" ng-show="sc.group == 'MT'">
+        <span class="input-label">Číslo smlouvy</span>
+        <input type="number" ng-model="sc.agreementNumber" required>
+      </label>
+      <label class="item item-input" ng-show="sc.group == 'MT'">
+        <span class="input-label">Výše půjčky</span>
+        <input type="number" ng-model="sc.issueValue" required ng-change="updateView()">
+      </label>
+      <div class="item item-divider item-positive" ng-show="sc.group == 'MT'">
+        Refinancování
+      </div>
+      <div class="button-bar padding" ng-show="sc.group == 'MT'">
+        <a grouped-radio="'a'" ng-model="sc.ref">Ano</a>
+        <a grouped-radio="'n'" ng-model="sc.ref">Ne</a>
+      </div>
+      <label class="item item-input" ng-show="sc.group == 'MT' && sc.ref == 'a'">
+        <span class="input-label">Číslo refinancované smlouvy</span>
+        <input type="number" ng-model="sc.refAgreementNumber">
+      </label>
+      <label class="item item-input" ng-show="sc.group == 'MT' && sc.ref == 'a'">
+        <span class="input-label">Výše refinancování</span>
+        <input type="number" ng-model="sc.refValue" ng-change="updateView()">
+      </label>
+      <label class="item item-input" ng-show="sc.group == 'MT'">
+        <span class="input-label">Vyplacená částka</span>
+        <input type="text" value="{{computedPaidOutValue | number}} Kč" readonly>
+      </label>
+      <div class="item item-divider item-positive" ng-show="sc.group == 'MT'">
+        Bankovní účet
+      </div>
+      <label class="item item-input" ng-show="sc.group == 'MT'">
+        <span class="input-label">Předčíslí</span>
+        <input type="number" ng-model="sc.bankPrefix">
+      </label>
+      <label class="item item-input" ng-show="sc.group == 'MT'">
+        <span class="input-label">Číslo účtu</span>
+        <input type="number" ng-model="sc.bankNumber" required>
+      </label>
+      <label class="item item-input" ng-show="sc.group == 'MT'">
+        <span class="input-label">Kód banky</span>
+        <input type="number" ng-model="sc.bankCode" required>
+      </label>
+      <div class="item item-divider item-positive" ng-show="sc.group == 'HC'">
+        Údaje o půjčce v hotovosti
+      </div>
+      <label class="item item-input" ng-show="sc.group == 'HC'">
+        <span class="input-label">Rodné číslo</span>
+        <input type="number" ng-model="sc.pin" required>
+      </label>
+      <label class="item item-input" ng-show="sc.group == 'HC'">
+        <span class="input-label">Vyplacená částka</span>
+        <input type="number" ng-model="sc.paidOutValue" required>
+      </label>
+      <div class="item item-divider item-positive" ng-show="sc.group">
+        Obecné informace
+      </div>
+      <label class="item item-input" ng-show="sc.group">
+        <span class="input-label">Datum vyplacení</span>
+        <input type="date" ng-model="sc.date"required>
+      </label>
+      <div class="item item-divider item-positive" ng-show="sc.group">
+        Doba splácení
+      </div>
+      <ion-radio ng-show="sc.group" ng-repeat="item in termList" ng-value="item.value" ng-model="sc.term" name="type">{{item.text}}</ion-radio>
+      <button ng-show="sc.group == 'HC'" class="item button button-block button-balanced" ng-click="payHc(sc)">
+        Vyplatit
+      </button>
+      <button ng-show="sc.group == 'MT'" class="item button button-block button-balanced" ng-click="payMt(sc)">
+        Vyplatit
+      </button>
+    </div>
+  </ion-content>
+</ion-view>

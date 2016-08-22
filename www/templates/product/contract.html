@@ -1,0 +1,50 @@
+<ion-view view-title="Smlouva o zápůjčce">
+  <ion-content class="padding">
+    <div class="list">
+        <span class="item">
+            Typ smlouvy
+            <span class="item-note">{{d.productCategory}}</span>
+        </span>
+        <span class="item">
+            Celková výše spotřebitelského úvěru
+            <span class="item-note">{{d.totalAmountOfLoan | number}} Kč</span>
+        </span>
+        <span class="item">
+            Celkový poplatek
+            <span class="item-note">{{d.totalFee | number}} Kč</span>
+        </span>
+        <span class="item">
+            Úrok
+            <span class="item-note">{{d.interest | number}} Kč</span>
+        </span>
+        <span class="item">
+            Částka za zpracování{{handlingDescription}}
+            <span class="item-note">{{d.handlingFee | number}} Kč</span>
+        </span>
+        <span class="item">
+            Částka za {{adminDescription}}
+            <span class="item-note">{{d.adminFee | number}} Kč</span>
+        </span>
+        <span class="item">
+            Celková dlužná částka
+            <span class="item-note">{{d.totalDueAmount | number}} Kč</span>
+        </span>
+        <span class="item">
+            Počet {{instalmentDescription2}} splátek
+            <span class="item-note">{{d.term}}</span>
+        </span>
+        <span class="item">
+            Výše {{instalmentDescription}} splátky
+            <span class="item-note">{{d.weeklyInstallment | number}} Kč</span>
+        </span>
+        <span class="item">
+            Výše poslední {{instalmentDescription}} splátky
+            <span class="item-note">{{d.lastWeeklyInstallment | number}} Kč</span>
+        </span>
+        <span class="item">
+            RPSN
+            <span class="item-note">{{d.apr}} %</span>
+        </span>
+    </div>
+  </ion-content>
+</ion-view>
