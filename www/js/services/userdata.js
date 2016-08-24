@@ -10,6 +10,9 @@ angular.module('cockpit.services')
   var LAST_UPDATE = 'lastUpdate';
 
   var that = {
+    getToken: function() {
+      return $localstorage.get(VALIDATION_TOKEN);
+    },
     login: function(type, username, password, text, token) {
       if (type === 'no2f') {
         return $q(function (resolve) {
