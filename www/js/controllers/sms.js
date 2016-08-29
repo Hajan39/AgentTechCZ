@@ -56,7 +56,7 @@ angular.module('cockpit.controllers')
         ";d" + data.date.getDate() + "." + month + "." + year
         + ";v" + $scope.computedPaidOutValue.toString()
         + ";s" + data.term.toString()
-        + ";tH";
+        + ";tB";
 
       $cordovaSms.send('+420606999008', text)
         .then(function() {
@@ -244,11 +244,38 @@ angular.module('cockpit.controllers')
     $ionicLoading.show();
     try {
       var text = '';
+      var normalize = function(str) {
+      	// UTF8 "ěščřžýáíéťúůóďňľĺ"
+      	convFromL = String.fromCharCode(283,353,269,345,382,253,225,237,233,357,367,250,243,271,328,318,314);
+      	// UTF8 "escrzyaietuuodnll"
+      	convToL = String.fromCharCode(101,115,99,114,122,121,97,105,101,116,117,117,111,100,110,108,108);
+
+      	// zmenseni a odstraneni diakritiky
+      	str = str.toLowerCase();
+      	str = strtr(str,convFromL,convToL);
+
+      	return str;
+      };
+      var strtr = function strtr(s, from, to) {
+      	out = new String();
+      	// slow but simple :^)
+      	top:
+      	for(i=0; i < s.length; i++) {
+      		for(j=0; j < from.length; j++) {
+      			if(s.charAt(i) == from.charAt(j)) {
+      				out += to.charAt(j);
+      				continue top;
+      			}
+      		}
+      		out += s.charAt(i);
+      	}
+      	return out;
+      };
 
       if (data.type == 'NC') {
         var text = 'rc' + data.pin.toString() +
-          '#' + data.firstName +
-          '#' + data.lastName +
+          '#' + normalize(data.firstName) +
+          '#' + normalize(data.lastName) +
           '#' + data.phone +
           '#' + data.emp +
           '#' + data.idt +
@@ -270,8 +297,8 @@ angular.module('cockpit.controllers')
           ;
       } else {
         var text = data.cid.toString() +
-          '#' + data.firstName +
-          '#' + data.lastName +
+          '#' + normalize(data.firstName) +
+          '#' + normalize(data.lastName) +
           '#' + data.phone +
           '#' + data.emp +
           '#' + data.idt +
