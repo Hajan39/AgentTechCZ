@@ -7,7 +7,7 @@
       </div>
       <label class="item item-input" ng-show="sc.type == 'NC'">
         <span class="input-label">Rodné číslo</span>
-        <input type="number" ng-model="sc.pin">
+        <input type="number" ng-model="sc.pin" placeholder="zadávejte bez lomítka">
       </label>
       <label class="item item-input" ng-show="sc.type == 'RES'">
         <span class="input-label">Číslo zákazníka</span>
@@ -28,27 +28,27 @@
       <div class="item item-divider item-positive">
         Finanční údaje
       </div>
-      <label class="item item-input">
+      <label class="item item-input item-stacked-label">
         <span class="input-label">Měs. fixní příjem žadatele</span>
         <input type="number" ng-model="sc.tmfi"required>
       </label>
-      <label class="item item-input">
+      <label class="item item-input item-stacked-label">
         <span class="input-label">Měs. fixní příjem domácnosti</span>
         <input type="number" ng-model="sc.mfih" required>
       </label>
-      <label class="item item-input">
+      <label class="item item-input item-stacked-label">
         <span class="input-label">Měsíční splátky ext. půjček</span>
         <input type="number" ng-model="sc.tmvi"required>
       </label>
-      <label class="item item-input">
+      <label class="item item-input item-stacked-label">
         <span class="input-label">Odhadované měs. výdaje</span>
         <input type="number" ng-model="sc.eme" required>
       </label>
-      <label class="item item-input">
+      <label class="item item-input item-stacked-label">
         <span class="input-label">Navrhovaná měs. splátka</span>
         <input type="number" ng-model="sc.pmi" required>
       </label>
-      <label class="item item-input">
+      <label class="item item-input item-stacked-label">
         <span class="input-label">Požadovaná výše půjčky</span>
         <input type="number" ng-model="sc.req" required>
       </label>

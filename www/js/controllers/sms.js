@@ -1,6 +1,78 @@
 angular.module('cockpit.controllers')
 
 .controller('SaleCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics, PRODUCTS, UserData) {
+  var validatePin = function(pin) {
+    try {
+      var pin = pin.toString();
+      var year = parseInt(pin.substring(0, 2));
+      var month = parseInt(pin.substring(2, 4));
+      var day = parseInt(pin.substring(4, 6));
+      var control = pin.substring(6);
+
+      var error = false;
+
+      if (year > 53 && control.length != 4) {
+          error = true;
+      }
+      control = control.trim();
+
+      //control cannot be 000 for 9 characters pin
+      if (control.length == 3 && control == "000") {
+          error = true;
+      }
+
+      year += year < 54 && control.length == 4 ? 2000 : 1900;
+
+      if (year > new Date().getFullYear() - 16) {
+          error = true;
+      }
+
+      if (month > 70) {
+          month -= 70;
+      } else if (month > 50) {
+          month -= 50;
+      } else if (month > 20) {
+          month -= 20;
+      }
+
+      try {
+          var bz = new Date(year, month - 1, day);
+          if (bz.getDate() != day) {
+            error = true;
+          } else if (bz.getMonth() != (month - 1)) {
+            error = true;
+          } else if (bz.getFullYear() != year) {
+            error = true;
+          }
+      } catch(e) {
+          error = true;
+      }
+
+
+      if (year > 1953 && !error) {
+          var bz = parseInt(pin.substring(0, 9));
+          var ps = bz % 11;
+
+          if (ps == 10) {
+              if (pin[9] != '0') {
+                  error = true;
+              }
+          } else {
+              bz = parseInt(pin);
+              ps = bz % 11;
+              if (ps != 0) {
+                  error = true;
+              }
+          }
+      }
+
+      //return opposite of error -> if validate returns true than PIN is valid
+      return !error;
+    } catch(e) {
+      return false;
+    }
+  };
+
   $scope.sc = {
       cat: '',
       ref: 'n'
@@ -41,6 +113,15 @@ angular.module('cockpit.controllers')
         $ionicPopup.alert({
           title: 'SMS',
           template: 'Prodej nelze nahlásit.<br><small>Zkontrolujte, že jste vyplnili všechny povinné parametry.</small>'
+        });
+        return;
+      }
+
+      if (!validatePin(data.pin)) {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Prodej nelze nahlásit.<br><small>Rodné číslo není validní.</small>'
         });
         return;
       }
@@ -125,6 +206,15 @@ angular.module('cockpit.controllers')
         return;
       }
 
+      if (!validatePin(data.pin)) {
+        $ionicLoading.hide();
+        $ionicPopup.alert({
+          title: 'SMS',
+          template: 'Prodej nelze nahlásit.<br><small>Rodné číslo není validní.</small>'
+        });
+        return;
+      }
+
       var month = data.date.getMonth() + 1;
       var year = data.date.getFullYear();
       if (month == 13) {
@@ -162,6 +252,88 @@ angular.module('cockpit.controllers')
 })
 
 .controller('SmsScoringCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
+  var validatePin = function(pin) {
+    try {
+      var pin = pin.toString();
+      var year = parseInt(pin.substring(0, 2));
+      var month = parseInt(pin.substring(2, 4));
+      var day = parseInt(pin.substring(4, 6));
+      var control = pin.substring(6);
+
+      var error = false;
+
+      if (year > 53 && control.length != 4) {
+          error = true;
+      }
+      control = control.trim();
+
+      //control cannot be 000 for 9 characters pin
+      if (control.length == 3 && control == "000") {
+          error = true;
+      }
+
+      year += year < 54 && control.length == 4 ? 2000 : 1900;
+
+      if (year > new Date().getFullYear() - 16) {
+          error = true;
+      }
+
+      if (month > 70) {
+          month -= 70;
+      } else if (month > 50) {
+          month -= 50;
+      } else if (month > 20) {
+          month -= 20;
+      }
+
+      try {
+          var bz = new Date(year, month - 1, day);
+          if (bz.getDate() != day) {
+            error = true;
+          } else if (bz.getMonth() != (month - 1)) {
+            error = true;
+          } else if (bz.getFullYear() != year) {
+            error = true;
+          }
+      } catch(e) {
+          error = true;
+      }
+
+
+      if (year > 1953 && !error) {
+          var bz = parseInt(pin.substring(0, 9));
+          var ps = bz % 11;
+
+          if (ps == 10) {
+              if (pin[9] != '0') {
+                  error = true;
+              }
+          } else {
+              bz = parseInt(pin);
+              ps = bz % 11;
+              if (ps != 0) {
+                  error = true;
+              }
+          }
+      }
+
+      //return opposite of error -> if validate returns true than PIN is valid
+      return !error;
+    } catch(e) {
+      return false;
+    }
+  };
+
+  var validateCid = function(cid) {
+    var cid = cid.toString();
+    try {
+      return /^(6|10(0|1|2)[0-9])((-|000)\d{6}|(-|0000)\d{5})$/.test(cid);
+    } catch(e) {
+      return false;
+    }
+    return true;
+  };
+
   $scope.sc = {
     type: 'NC',
     req: null,
@@ -237,6 +409,22 @@ angular.module('cockpit.controllers')
       $ionicPopup.alert({
         title: 'SMS',
         template: 'Skóring nelze odeslat.<br><small>Zkontrolujte, že jste vyplnili všechny povinné parametry.</small>'
+      });
+      return;
+    }
+
+    if (data.type == 'NC' && !validatePin(data.pin)) {
+      $ionicPopup.alert({
+        title: 'SMS',
+        template: 'Skóring nelze odeslat.<br><small>Rodné číslo není validní.</small>'
+      });
+      return;
+    }
+
+    if (data.type == 'RES' && !validateCid(data.cid)) {
+      $ionicPopup.alert({
+        title: 'SMS',
+        template: 'Skóring nelze odeslat.<br><small>Číslo zákazníka není validní.</small>'
       });
       return;
     }
@@ -358,6 +546,16 @@ angular.module('cockpit.controllers')
 })
 
 .controller('PtpCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
+  var validateCid = function(cid) {
+    var cid = cid.toString();
+    try {
+      return /^(6|10(0|1|2)[0-9])((-|000)\d{6}|(-|0000)\d{5})$/.test(cid);
+    } catch(e) {
+      return false;
+    }
+    return true;
+  };
+
   $scope.ptp = function (data) {
     $ionicLoading.show();
 
@@ -367,6 +565,16 @@ angular.module('cockpit.controllers')
         title: 'SMS',
         template: 'Dohodu nelze odeslat.<br><small>Zkontrolujte, že jste vyplnili všechny povinné parametry.</small>'
       });
+      return;
+    }
+
+    if (!validateCid(data.cid)) {
+      $ionicLoading.hide();
+      $ionicPopup.alert({
+        title: 'SMS',
+        template: 'Dohodu nelze odeslat.<br><small>Číslo zákazníka není validní.</small>'
+      });
+      return;
     }
 
     var text = "#DO#" + data.cid.toString() +
