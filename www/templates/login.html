@@ -1,23 +1,6 @@
 <ion-view view-title="Agent Cockpit">
     <ion-content class="padding background" scroll="false">
         <img src="img/logo.png" width="100%" />
-        <div class="list">
-            <!-- <div class="card">
-        <div class="item item-divider">Přihlášení</div>
-        <div class="item item-body">
-          <div>Tato aplikace slouží pouze pro obchodní zástupce a zaměstnance společnosti <b>Provident Financial</b>.</div>
-          <p>Pro první použití se musíte přihlásit.</p>
-          <p>Přihlášení vyžaduje připojení k internetu.</p>
-        </div>
-      </div>
-        <div class="card" ng-show="phase === 2">
-          <div class="item item-divider">SMS ověření</div>
-          <div class="item item-body">
-            <div>Opište prosím SMS kód pro ověření.</div>
-            <p>SMS kód vám dorazí na telefonní číslo, které máte vedeno v systému FOCUS.</p>
-          </div>
-        </div> -->
-        </div>
         <div class="item item-body tr-card" ng-show="phase === 1">
             <div class="list">
                 <label class="item item-input ntr-card">
@@ -33,7 +16,6 @@
                 Přihlásit
             </button>
         </div>
-        </div>
         <div class="item item-body tr-card" ng-show="phase === 2">
             <div class="list">
                 <label class="item item-input ntr-card">
@@ -48,8 +30,5 @@
                 Zpět
             </button>
         </div>
-        </div>
-        </div>
-        </form>
     </ion-content>
 </ion-view>
