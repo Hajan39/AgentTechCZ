@@ -94,7 +94,7 @@ angular.module('cockpit.services')
         return $q(function (resolve) {
           var realPassword = $localstorage.get(PASSWORD, '');
           if (realPassword.length === 0) {
-            resolve({});
+            resolve({code: 'ERR'});
             return;
           }
 
@@ -116,9 +116,9 @@ angular.module('cockpit.services')
           }).then(function(data) {
             $localstorage.set(ACCESS_TOKEN, data.data.access_token);
 
-            resolve({});
+            resolve({code: 'OK'});
           }).catch(function (error) {
-            resolve({});
+            resolve({code: 'ERR'});
           });
         });
       }
@@ -134,6 +134,7 @@ angular.module('cockpit.services')
       $localstorage.set(VALIDATION_TOKEN, undefined);
       $localstorage.set(ACCESS_TOKEN, undefined);
       $localstorage.set(LAST_UPDATE, undefined);
+      window.location.reload();
     },
 
     hasLoggedIn: function() {
@@ -186,7 +187,16 @@ angular.module('cockpit.services')
             resolve({code: 'OK', data: data.data});
         }).catch(function (error) {
           if (error.status === 401 && reauthorize) {
-            that.reauthorize().then(function () {
+            that.reauthorize().then(function (reIn) {
+              if (reIn.code == 'ERR') {
+                $localstorage.set(STORAGE_KEY, undefined);
+                $localstorage.set(HAS_LOGGED_IN, undefined);
+                $localstorage.set(VALIDATION_TOKEN, undefined);
+                $localstorage.set(ACCESS_TOKEN, undefined);
+                $localstorage.set(LAST_UPDATE, undefined);
+                window.location.reload();
+                return;
+              }
               that.get(url, storageKey, false).then(function (result) {
                 if (storageKey !== undefined) {
                   storage[storageKey] = {value: data.data};
@@ -198,6 +208,13 @@ angular.module('cockpit.services')
               }).catch(function (error) {
                 resolve({code: 'ERR'});
               });
+            }).catch(function (error) {
+              $localstorage.set(STORAGE_KEY, undefined);
+              $localstorage.set(HAS_LOGGED_IN, undefined);
+              $localstorage.set(VALIDATION_TOKEN, undefined);
+              $localstorage.set(ACCESS_TOKEN, undefined);
+              $localstorage.set(LAST_UPDATE, undefined);
+              window.location.reload();
             });
           } else {
             resolve({code: 'ERR'});

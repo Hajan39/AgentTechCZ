@@ -28,7 +28,8 @@ angular.module('cockpit.services')
         }
 
         var position = result.data.position;
-        position.role = position.positionCode === 4 ? "BR" : "AG";
+        position.role = position.positionCode === 4 ? "BR" :
+          (position.positionCode == 3 ? 'BL' : "AG");
 
         return {
           position: position,
@@ -131,25 +132,28 @@ angular.module('cockpit.services')
 
     getSubStats: function (id) {
       return getData('stats/' + id).then(function (result) {
-        if (result.code != 'OK') {
-          return {plans: [], month: null};
-        }
+        return getData('comm?repId=' + id).then(function (commResult) {
+          if (result.code != 'OK' || commResult.code != 'OK') {
+            return {plans: [], month: null, comm: {weekId: 0}};
+          }
 
-        var coll = result.data.filter(function (row) {
-          return row.desc != 'C1' && row.desc != 'C2' && row.desc != 'L1' && row.desc != 'L2';
+          var coll = result.data.filter(function (row) {
+            return row.desc != 'C1' && row.desc != 'C2' && row.desc != 'L1' && row.desc != 'L2';
+          });
+
+          return {
+            plans: coll.map(function (e) {
+                switch (e.desc) {
+                  case 'Coll': return {desc: 'Výběry', plan: e.plan, reality: e.reality};
+                  case 'Sales': return {desc: 'Prodeje', plan: e.plan, reality: e.reality};
+                  case 'Reserves': return {desc: 'RES', plan: e.plan, reality: e.reality};
+                  default: return e
+                }
+              }),
+            comm: commResult.data,
+            month: coll[0] === undefined ? null : coll[0].thismonth
+          };
         });
-
-        return {
-          plans: coll.map(function (e) {
-              switch (e.desc) {
-                case 'Coll': return {desc: 'Výběry', plan: e.plan, reality: e.reality};
-                case 'Sales': return {desc: 'Prodeje', plan: e.plan, reality: e.reality};
-                case 'Reserves': return {desc: 'RES', plan: e.plan, reality: e.reality};
-                default: return e
-              }
-            }),
-          month: coll[0] === undefined ? null : coll[0].thismonth
-        };
       }).catch(function() {
         return {plans: [], month: null};
       });
@@ -167,8 +171,8 @@ angular.module('cockpit.services')
       });
     },
 
-    getAgentCommissionDetail: function (weekId) {
-      return UserData.get('comm/' + weekId).then(function (result) {
+    getAgentCommissionDetail: function (weekId, chosenView) {
+      return UserData.get('comm/' + weekId + (chosenView === null ? '' : ('?repId=' + chosenView))).then(function (result) {
         if (result.code != 'OK' || result.data.length === undefined) {
           return null;
         }

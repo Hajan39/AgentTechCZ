@@ -11,7 +11,8 @@ angular.module('cockpit.controllers')
     $scope.brmRole = user.position.role;
     $scope.user = user.position;
 
-    if (user.position.role == 'BR') {
+debugger;
+    if (user.position.role == 'BR' || user.position.role == 'BL') {
       CockpitData.getReports().then(function (reports) {
         $scope.viewData = reports.plans;
         $scope.fulfillment = reports.fulfillment;

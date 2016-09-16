@@ -23,6 +23,19 @@
             Odeslat reporting
           </button>
         </div>
+
+
+
+        <div ng-show="brmRole === 'BL'">
+          <div class="list no-border">
+            <div class="item" ng-repeat="row in viewData" ng-click="brmShowStats(row.paramName)">
+              {{row.paramName}}
+              <div class="item-note item-right">
+                {{row.value}}
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
 
 

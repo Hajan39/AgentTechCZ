@@ -21,7 +21,7 @@ angular.module('cockpit.controllers')
   $scope.doLogout = function() {
     $ionicPopup.confirm({
       title: 'Odhlášení',
-      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (3.0.3.3000031)?'
+      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (3.0.5.3000035)?'
     }).then(function (res) {
       if (res) {
         UserData.logout();
@@ -85,6 +85,8 @@ angular.module('cockpit.controllers')
     };
     $scope.plans = [];
     $scope.month = null;
+    $scope.comm = {weekId: 0};
+    $scope.commDetail = false;
 
     CockpitData.getStats().then(function (data) {
       $scope.plans = data.plans;
@@ -101,6 +103,8 @@ angular.module('cockpit.controllers')
       };
       $scope.plans = [];
       $scope.month = null;
+      $scope.comm = {weekId: 0};
+      $scope.commDetail = false;
 
       CockpitData.getStats().then(function (data) {
         $scope.plans = data.plans;
@@ -111,10 +115,14 @@ angular.module('cockpit.controllers')
       $scope.chosenView = sub;
       $scope.plans = [];
       $scope.month = null;
+      $scope.comm = {weekId: 0};
+      $scope.commDetail = false;
 
       CockpitData.getSubStats(sub.id).then(function (data) {
         $scope.plans = data.plans;
         $scope.month = data.month;
+        $scope.comm = data.comm;
+        $scope.commDetail = false;
         $scope.lastUpdate = UserData.getLastUpdate().format('HH:mm D. M. YYYY');
       });
     }
@@ -153,7 +161,7 @@ angular.module('cockpit.controllers')
     $ionicLoading.show({
       template: '<div><div><ion-spinner icon="ripple" class="spinner-energized" style="width: 128px; height: 128px"></div><div>Načítání provizí</div></div>'
     });
-    CockpitData.getAgentCommissionDetail($scope.comm.weekId).then(function (data) {
+    CockpitData.getAgentCommissionDetail($scope.comm.weekId, $scope.chosenView.id).then(function (data) {
       $ionicLoading.hide();
       if (data == null) {
         $scope.commDetail = {
@@ -177,7 +185,7 @@ angular.module('cockpit.controllers')
     $scope.commDetail.showNextWeek = false;
     var newWeek = $scope.commDetail.weekId - 1;
 
-    CockpitData.getAgentCommissionDetail(newWeek).then(function (data) {
+    CockpitData.getAgentCommissionDetail(newWeek, $scope.chosenView.id).then(function (data) {
       if (data == null) {
         $scope.commDetail = {
           show: false
@@ -201,7 +209,7 @@ angular.module('cockpit.controllers')
     $scope.commDetail.showNextWeek = false;
     var newWeek = $scope.commDetail.weekId + 1;
 
-    CockpitData.getAgentCommissionDetail(newWeek).then(function (data) {
+    CockpitData.getAgentCommissionDetail(newWeek, $scope.chosenView.id).then(function (data) {
       if (data == null) {
         $scope.commDetail = {
           show: false

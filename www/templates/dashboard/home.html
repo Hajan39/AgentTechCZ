@@ -19,6 +19,9 @@
                                 Sekce: <b>{{user.sectionLetter}}</b>
                                 <br /> Pobočka: <b>{{user.branch}}</b>
                             </div>
+                            <div ng-show="chosenView.id === null && user.role == 'BL'">
+                                <b>{{user.positionName}}</b>
+                            </div>
                             <div ng-show="chosenView.id !== null">
                                 Zobrazen <b>{{chosenView.roleDescription}}</b>
                             </div>
