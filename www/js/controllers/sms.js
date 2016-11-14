@@ -404,8 +404,8 @@ angular.module('cockpit.controllers')
   };
 
   $scope.score = function (data) {
-    if ((data.type == 'NC' && !validate([data.pin, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.req, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih]))
-      || (data.type == 'RES' && !validate([data.cid, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.req, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih]))) {
+    if ((data.type == 'NC' && !validate([data.pin, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.req, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih, data.otherMonthlyIncome]))
+      || (data.type == 'RES' && !validate([data.cid, data.firstName, data.lastName, data.phone, data.emp, data.liv, data.idt, data.idn, data.cb, data.req, data.tmfi, data.tmvi, data.bank, data.car, data.chi, data.eme, data.pmi, data.mar, data.edu, data.mfih, data.otherMonthlyIncome]))) {
       $ionicPopup.alert({
         title: 'SMS',
         template: 'Skóring nelze odeslat.<br><small>Zkontrolujte, že jste vyplnili všechny povinné parametry.</small>'
@@ -479,6 +479,7 @@ angular.module('cockpit.controllers')
           '#' + data.edu +
           '#' + data.car +
           '#' + data.chi +
+          '#' + data.otherMonthlyIncome +
           '#' + data.mfih +
           '#p' + (data.req.toString()) +
           (data.id === null || data.id === undefined ? '' : '#' + data.id.toString())
@@ -502,6 +503,7 @@ angular.module('cockpit.controllers')
           '#' + data.edu +
           '#' + data.car +
           '#' + data.chi +
+          '#' + data.otherMonthlyIncome +
           '#' + data.mfih +
           '#p' + (data.req.toString()) +
           (data.id === null || data.id === undefined ? '' : '#' + data.id.toString())

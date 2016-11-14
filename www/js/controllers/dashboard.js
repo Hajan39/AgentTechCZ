@@ -21,7 +21,7 @@ angular.module('cockpit.controllers')
   $scope.doLogout = function() {
     $ionicPopup.confirm({
       title: 'Odhlášení',
-      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (3.0.5.3000035)?'
+      template: 'Skutečně se chcete odhlásit z aplikace OZ Cockpit (3.0.6.3000036)?'
     }).then(function (res) {
       if (res) {
         UserData.logout();

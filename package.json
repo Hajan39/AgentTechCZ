@@ -24,7 +24,9 @@
     "https://github.com/cordova-sms/cordova-sms-plugin.git",
     "cordova-plugin-sim",
     "https://github.com/floatinghotpot/cordova-plugin-sms",
-    "cordova-plugin-splashscreen"
+    "cordova-plugin-splashscreen",
+    "cordova-plugin-console",
+    "cordova-plugin-statusbar"
   ],
   "cordovaPlatforms": [
     "ios",
