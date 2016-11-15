@@ -579,6 +579,14 @@ angular.module('cockpit.controllers')
       return;
     }
 
+    var cid = data.cid.toString()
+
+    if (cid.length === 7 || cid.length == 10) {
+      cid = cid.replace('-', '0000')
+    } else if (cid.length === 8 || cid.length === 11) {
+      cid = cid.replace('-', '000')
+    }
+
     var text = "#DO#" + data.cid.toString() +
       "#" + data.fr.toString() + '#' +
       data.pay.toString() + '#' + moment(data.end).format('DDMMYYYY') + '#'
