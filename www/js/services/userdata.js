@@ -31,7 +31,7 @@ angular.module('cockpit.services')
               client_id: CLIENT_ID
             })
           }).then(function() {
-            resolve({code: 'ERR'});
+            resolve({code: 'ERR', message: 'Server return 200 (OK)'});
           }).catch(function (error) {
             if (error.status !== 400) {
               resolve({code: 'ERR'});
