@@ -21,7 +21,8 @@ angular.module('cockpit.services')
             url: URI_AUTHORIZATION_SERVER + 'oauth2/token',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Accept': 'application/json'
+              'Accept': 'application/json',
+              'Cache-Control': 'private, no-store, max-age=0'
             },
             data: $.param({
               username: username,
@@ -34,7 +35,7 @@ angular.module('cockpit.services')
             resolve({code: 'ERR', message: 'Server return 200 (OK)'});
           }).catch(function (error) {
             if (error.status !== 400) {
-              resolve({code: 'ERR'});
+              resolve({code: 'ERR', message: error.statusText + ' (' + error.status + ')'});
             } else {
               if (error.data.error === 'ok') {
                 resolve({code: 'OK', token: error.data.error_description});

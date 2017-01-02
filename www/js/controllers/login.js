@@ -94,7 +94,7 @@ angular.module('cockpit.controllers')
         default:
           $ionicPopup.alert({
             title: 'Varování',
-            template: 'Chyba komunikace.<br><small>Vyčkejte chvíli, příp. kontaktuje IT helpdesk.<</small>'
+            template: 'Chyba komunikace (zkontrolujte připojení k internetu).<br><small>Kód chyby: ' + resultNo2F.message + '</small>'
           });
           break;
       }

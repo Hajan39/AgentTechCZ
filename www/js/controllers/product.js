@@ -319,14 +319,15 @@ angular.module('cockpit.controllers')
         $scope.instalmentDescription = this.termType == 'MO' ? 'měsíční' : 'týdenní';
         $scope.instalmentDescription3 = this.termType == 'MO' ? 'měsíců' : 'týdnů';
         if (key.substring(0, 2) == 'HC') {
-          $scope.handlingDescription = ' a doručení';
-          $scope.adminDescription = 'komfortní a flexibilní splácení';
+          $scope.handlingDescription = ', doručení a flexibilní splácení';
+          $scope.adminDescription = 'administrativní činnost a komfortní splácení';
         } else {
-          $scope.handlingDescription = '';
           if (key.substring(0, 3) == 'MT+') {
+            $scope.handlingDescription = '';
             $scope.adminDescription = 'administrativní činnost';
           } else {
-            $scope.adminDescription = 'administrativní činnost a flexibilní splácení';
+            $scope.handlingDescription = ' a flexibilní splácení';
+            $scope.adminDescription = 'administrativní činnost';
           }
         }
       }
@@ -349,14 +350,15 @@ angular.module('cockpit.controllers')
         $scope.instalmentDescription = this.termType == 'MO' ? 'měsíční' : 'týdenní';
         $scope.instalmentDescription2 = this.termType == 'MO' ? 'měsíčních' : 'týdenních';
         if (key.substring(0, 2) == 'HC') {
-          $scope.handlingDescription = ' a doručení';
-          $scope.adminDescription = 'komfortní a flexibilní splácení';
+          $scope.handlingDescription = ', doručení a flexibilní splácení';
+          $scope.adminDescription = 'administrativní činnost a komfortní splácení';
         } else {
-          $scope.handlingDescription = '';
           if (key.substring(0, 3) == 'MT+') {
+            $scope.handlingDescription = '';
             $scope.adminDescription = 'administrativní činnost';
           } else {
-            $scope.adminDescription = 'administrativní činnost a flexibilní splácení';
+            $scope.handlingDescription = ' a flexibilní splácení';
+            $scope.adminDescription = 'administrativní činnost';
           }
         }
       }

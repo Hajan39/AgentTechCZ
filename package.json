@@ -19,14 +19,19 @@
     "https://github.com/danwilson/google-analytics-plugin.git",
     "cordova-plugin-device",
     "cordova-plugin-whitelist",
-    "cordova-plugin-google-analytics@0.7.1",
     "ionic-plugin-keyboard",
     "https://github.com/cordova-sms/cordova-sms-plugin.git",
     "cordova-plugin-sim",
     "https://github.com/floatinghotpot/cordova-plugin-sms",
     "cordova-plugin-splashscreen",
     "cordova-plugin-console",
-    "cordova-plugin-statusbar"
+    "cordova-plugin-statusbar",
+    "cordova-plugin-whitelist@~1.3.0",
+    "cordova-plugin-console@~1.0.4",
+    "cordova-plugin-splashscreen@~4.0.0",
+    "ionic-plugin-keyboard@~2.2.1",
+    "cordova-sms-plugin",
+    "https://github.com/apache/cordova-plugin-whitelist.git"
   ],
   "cordovaPlatforms": [
     "ios",
