@@ -22,7 +22,7 @@ angular.module('cockpit.controllers')
   if (window.plugins !== undefined && window.plugins.sim !== undefined) {
     window.plugins.sim.getSimInfo(function (result) {
       if (result.phoneNumber !== undefined) {
-        $scope.lg.phoneNumber = result.phoneNumber;
+        $scope.lg.phoneNumber = parseInt(result.phoneNumber.substring(4))
       }
     })
   }
@@ -54,6 +54,11 @@ angular.module('cockpit.controllers')
           })
         }, 1*1000);*/
     }
+
+    /*
+    $scope.lg.personalNumber = $('#personalNumber').val()
+    $scope.lg.phoneNumber = $('#phone').val()
+    */
 
     if ($scope.lg.personalNumber === null) {
       $ionicPopup.alert({

@@ -39,7 +39,7 @@
                 <div class="item item-divider item-positive">Provize na týden {{comm.weekId.toString() | weekId}}</div>
                 <div class="item item-body">
                     <div class="row">
-                        <div class="col center" style="font-size: bigger; text-align: center;"><strong>{{comm.amount | number:0}} Kč</strong></div>
+                        <div class="col center" style="font-size: bigger; text-align: center;"><strong>{{comm.amount | num}} Kč</strong></div>
                     </div>
                     <div style="font-size: smaller; text-align: center; color: #aaa"><i>zobrazit více</i></div>
                 </div>
@@ -49,11 +49,11 @@
                 <div class="item item-body">
                     <div class="row">
                         <div class="col" style="font-size: bigger;"><strong>Celková provize</strong></div>
-                        <div class="col" style="font-size: bigger; text-align: right; vertical-align: middle;"><strong ng-class="{red: commDetail.totalAmount < 0}">{{commDetail.totalAmount | number:0}} Kč</strong></div>
+                        <div class="col" style="font-size: bigger; text-align: right; vertical-align: middle;"><strong ng-class="{red: commDetail.totalAmount < 0}">{{commDetail.totalAmount | num}} Kč</strong></div>
                     </div>
                     <div class="row" ng-repeat="row in commDetail.comm">
                         <div class="col" style="font-size: bigger;">{{row.typeName}}</div>
-                        <div class="col" style="font-size: bigger; text-align: right; vertical-align: middle;"><strong ng-class="{red: row.amount < 0}">{{row.amount | number:0}} Kč</strong></div>
+                        <div class="col" style="font-size: bigger; text-align: right; vertical-align: middle;"><strong ng-class="{red: row.amount < 0}">{{row.amount | num}} Kč</strong></div>
                     </div>
                     <div class="row">
                         <div class="col">
@@ -76,14 +76,14 @@
                         </div>
                         <div class="row" ng-repeat="plan in plans">
                             <div class="col" style="font-size: bigger;">{{plan.desc}}</div>
-                            <div class="col" style="font-size: bigger;">{{plan.plan | number:0}}</div>
-                            <div class="col" style="font-size: bigger;">{{plan.reality | number:0}}</div>
+                            <div class="col" style="font-size: bigger;">{{plan.plan | num}}</div>
+                            <div class="col" style="font-size: bigger;">{{plan.reality | num}}</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div style="font-size: smaller; text-align: center; color: #aaa" ng-click="doRefresh()"><i>aktualizováno {{lastUpdate}}</i></div>
-            <div style="font-size: smaller; text-align: center; color: #aaa"><i>OZ Cockpit (CZ, 2017/01, rev. 1)</i></div>
+            <div style="font-size: smaller; text-align: center; color: #aaa"><i>OZ Cockpit (CZ, 2017/01, rev. 2)</i></div>
         </div>
     </ion-content>
     <ion-content class="padding background" ng-show="user.uniqueId === null" scroll="false">

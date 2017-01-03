@@ -59,7 +59,7 @@ angular.module('starter')
   return function(id) {
     if (id == null || id == undefined) return '';
     id = id.toString();
-    return id.length == 6 ? id.substring(4) + '/' + id.substring(0, 4) : id;
+    return id.length == 6 ? id.substring(0, 4) + '/' + id.substring(4) : id;
   };
 })
 
@@ -69,6 +69,19 @@ angular.module('starter')
     id = id.toString();
     return id.length == 6 ? id.substring(0, 4) + '/' + id.substring(4) : id;
   };
+})
+
+.filter('num', function() {
+  return function(number, decPlaces) {
+    if (decPlaces === undefined) {
+      decPlaces = 0;
+    }
+
+    var p = number.toFixed(decPlaces).split('.');
+    return p[0].split('').reverse().reduce(function(acc,num,i,orig) {
+      return num === '-' ? acc : num + (i && !(i % 3) ? ' ' : '') + acc;
+    }, '') + (p[1] === undefined ? '' : (',' + p[1]));
+  }
 })
 
 ;
