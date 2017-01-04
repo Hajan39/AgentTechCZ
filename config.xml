@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget android-versionCode="41701020" id="com.provident.agent.cz" version="2017.1.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="41701030" id="com.provident.agent.cz" version="2017.1.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>OZ Cockpit</name>
   <description>
         Aplikace pro podporu obchodních zástupců společnosti Provident Financial.
