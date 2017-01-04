@@ -11,7 +11,6 @@ angular.module('cockpit.controllers')
     $scope.brmRole = user.position.role;
     $scope.user = user.position;
 
-debugger;
     if (user.position.role == 'BR' || user.position.role == 'BL') {
       CockpitData.getReports().then(function (reports) {
         $scope.viewData = reports.plans;
@@ -34,34 +33,39 @@ debugger;
       });
     }
 
-    if ($scope.fulfillment.length > 0) {
-      var myPopup = $ionicPopup.show({
-        template: $scope.fulfillment.map(function (i) {
-          return i + '<br>';
-        }),
-        title: 'Opravdu chcete odeslat výsledky?',
-        subTitle: 'Následující OZ zatím nedoslali své výsledky.',
-        scope: $scope,
-        buttons: [
-          {
-            text: 'Zrušit'
-          },
-          {
-            text: '<strong>Odeslat</strong>',
-            type: 'button-positive',
-            onTap: function (e) {
-              action();
+    CockpitData.getReports().then(function (reports) {
+      $scope.viewData = reports.plans;
+      $scope.fulfillment = reports.fulfillment;
+
+      if ($scope.fulfillment.length > 0) {
+        var myPopup = $ionicPopup.show({
+          template: $scope.fulfillment.map(function (i) {
+            return i + '<br>';
+          }),
+          title: 'Opravdu chcete odeslat výsledky?',
+          subTitle: 'Následující OZ zatím nedoslali své výsledky.',
+          scope: $scope,
+          buttons: [
+            {
+              text: 'Zrušit'
+            },
+            {
+              text: '<strong>Odeslat</strong>',
+              type: 'button-positive',
+              onTap: function (e) {
+                action();
+              }
             }
-          }
-        ]
-      });
-    } else {
-      var myPopup = $ionicPopup.confirm({
-        title: 'Opravdu chcete odeslat výsledky?'
-      }).then(function (e) {
-        action();
-      });
-    }
+          ]
+        });
+      } else {
+        var myPopup = $ionicPopup.confirm({
+          title: 'Opravdu chcete odeslat výsledky?'
+        }).then(function (e) {
+          action();
+        });
+      }
+    });
   };
 
   $ionicModal.fromTemplateUrl('templates/results/detail.html', {

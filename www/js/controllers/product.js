@@ -43,6 +43,7 @@ angular.module('cockpit.controllers')
   };
 
   $scope.changeIssueValue = function() {
+
     $scope.productCategories = Object.keys(PRODUCTS.categories).map(function(catKey) {
       var category = PRODUCTS.categories[catKey];
       var ret = {
@@ -127,7 +128,6 @@ angular.module('cockpit.controllers')
     });
   };
   $scope.changeIssueValue();
-  console.log($scope.productCategories);
 
   $scope.toggleProductCategory = function(cat) {
     if ($scope.isProductCategoryShown(cat)) {
