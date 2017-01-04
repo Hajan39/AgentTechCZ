@@ -135,7 +135,7 @@ angular.module('cockpit.controllers')
 
       var text = "#PVYP;rc" + data.pin.toString() +
         ";d" + data.date.getDate() + "." + month + "." + year
-        + ";v" + $scope.computedPaidOutValue.toString()
+        + ";v" + data.issueValue.toString()
         + ";s" + data.term.toString()
         + ";tB";
 
