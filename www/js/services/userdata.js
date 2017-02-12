@@ -13,6 +13,9 @@ angular.module('cockpit.services')
     getToken: function() {
       return $localstorage.get(VALIDATION_TOKEN);
     },
+    getPhone: function() {
+      return $localstorage.get(PASSWORD, '');
+    },
     login: function(type, username, password, text, token) {
       if (type === 'no2f') {
         return $q(function (resolve) {

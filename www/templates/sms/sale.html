@@ -73,6 +73,10 @@
         Doba splácení
       </div>
       <ion-radio ng-show="sc.group" ng-repeat="item in termList" ng-value="item.value" ng-model="sc.term" name="term">{{item.text}}</ion-radio>
+      <div class="item item-divider item-positive" ng-show="sc.group">
+        Druh půjčky
+      </div>
+      <ion-radio ng-show="sc.group" ng-repeat="item in loans" ng-value="item.id" ng-model="sc.loanId" name="loan">{{item.code}}</ion-radio>
       <button ng-show="sc.group == 'HC'" class="item button button-block button-balanced" ng-click="payHc(sc)">
         Vyplatit
       </button>

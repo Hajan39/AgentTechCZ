@@ -37,7 +37,7 @@
         <input type="number" ng-model="sc.otherMonthlyIncome" required>
       </label>
       <label class="item item-input item-stacked-label">
-        <span class="input-label">Celkem / Příjem domácnosti</span> <!-- Měs. fixní příjem domácnosti -->
+        <span class="input-label">Celkem <span style="font-size: smaller; text-align: center; color: #aaa">(Měs. fixní příjem domácnosti)</span></span> <!-- M -->
         <input type="number" ng-model="sc.mfih" required>
       </label>
       <label class="item item-input item-stacked-label">
@@ -114,7 +114,7 @@
       </div>
       <label class="item item-input">
         <span class="input-label">Lead ID (LID)</span>
-        <input type="number" placeholder="nepovinný údaj, opište z LOAN SMS" ng-model="sc.id">
+        <input type="number" placeholder="využijte Leady na titulní obrazovce :)" ng-model="sc.id">
       </label>
       <button class="item button button-block button-balanced" ng-click="score(sc)">
         Skórovat

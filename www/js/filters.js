@@ -71,6 +71,31 @@ angular.module('starter')
   };
 })
 
+.filter('leadDate', function() {
+  return function (value) {
+    value = moment(value)
+
+    return value.format('D. M. HH:mm')
+  }
+})
+
+.filter('leadAssignedTo', function() {
+  return function (value) {
+    value = value + '' // make sure it's a string
+
+    if (/^[0-9]+$/.test(value)) {
+      // Agency Id
+      if (value[0] === '6') {
+        return value[0] + '-' + value.substring(value.length - 4, value.length)
+      } else {
+        return value.substring(0, 4) + '-' + value.substring(value.length - 4, value.length)
+      }
+    } else {
+      return value
+    }
+  }
+})
+
 .filter('num', function() {
   return function(number, decPlaces) {
     if (decPlaces === undefined) {

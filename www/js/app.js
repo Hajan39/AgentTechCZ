@@ -311,7 +311,7 @@ angular.module('starter', ['ionic', 'starter.services', 'ngCordova', 'cockpit.se
     })
 
   .state('tab.sms-scoring', {
-      url: '/sms-scoring',
+      url: '/sms-scoring/:pin/:firstName/:lastName/:phone/:lid',
       views: {
         'tab-sms-scoring': {
           templateUrl: 'templates/sms/scoring.html',
@@ -321,7 +321,7 @@ angular.module('starter', ['ionic', 'starter.services', 'ngCordova', 'cockpit.se
     })
 
   .state('tab.sms-sale', {
-      url: '/sms-sale',
+      url: '/sms-sale/:pin/:lid',
       views: {
         'tab-sms-sale': {
           templateUrl: 'templates/sms/sale.html',

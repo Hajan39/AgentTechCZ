@@ -18,7 +18,6 @@
     "org.apache.cordova.device",
     "https://github.com/danwilson/google-analytics-plugin.git",
     "cordova-plugin-device",
-    "cordova-plugin-whitelist",
     "ionic-plugin-keyboard",
     "https://github.com/cordova-sms/cordova-sms-plugin.git",
     "cordova-plugin-sim",
@@ -31,7 +30,10 @@
     "cordova-plugin-splashscreen@~4.0.0",
     "ionic-plugin-keyboard@~2.2.1",
     "cordova-sms-plugin",
-    "https://github.com/apache/cordova-plugin-whitelist.git"
+    "https://github.com/apache/cordova-plugin-whitelist.git",
+    "cordova-plugin-whitelist",
+    "https://github.com/Rohfosho/CordovaCallNumberPlugin.git",
+    "cordova-plugin-inappbrowser"
   ],
   "cordovaPlatforms": [
     "ios",

@@ -14,7 +14,7 @@
             <div class="item" ng-repeat="row in viewData" ng-click="brmShowStats(row.paramName)">
               {{row.paramName}}
               <div class="item-note item-right">
-                {{row.value}}
+                {{row.value | num}}
               </div>
             </div>
           </div>
@@ -31,7 +31,7 @@
             <div class="item" ng-repeat="row in viewData" ng-click="brmShowStats(row.paramName)">
               {{row.paramName}}
               <div class="item-note item-right">
-                {{row.value}}
+                {{row.value | num}}
               </div>
             </div>
           </div>

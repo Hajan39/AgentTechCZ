@@ -35,6 +35,39 @@
                     </div>
                 </div>
             </div>
+            <div lass="list card" ng-show="chosenView.id === null">
+                <div class="item item-divider item-positive">Leady</div>
+                <div class="item item-body list">
+                    <div class="item" ng-repeat="lead in shownLeads" ng-click="leadOpenDetail(lead)">
+                      <div ng-hide="lead.Activity.IsScheduled">
+                        <span style="color: #FF2400">{{lead.Contact.FirstName}} {{lead.Contact.LastName}}</span><br />
+                        <span ng-show="lead.Activity.ScheduledNote">{{lead.Activity.ScheduledNote}}<br /></span>
+                        <span ng-show="lead.Contact.MobilePhoneNumber">{{lead.Contact.MobilePhoneNumber}}</span><span ng-show="lead.Contact.HousePhoneNumber && !lead.Contact.HousePhoneNumber">{{lead.Contact.HousePhoneNumber}}</span><span ng-show="lead.Contact.StreetName || lead.Contact.HouseNumber || lead.Contact.PostalCode || lead.Contact.Town">:</span>
+                        <span>
+                          <span ng-show="lead.Contact.StreetName || lead.Contact.HouseNumber">{{lead.Contact.StreetName}} {{lead.Contact.HouseNumber}}</span><span ng-show="(lead.Contact.StreetName || lead.Contact.HouseNumber) && (lead.Contact.PostalCode || lead.Contact.Town)">,</span>
+                          <span ng-show="lead.Contact.PostalCode || lead.Contact.Town">{{lead.Contact.PostalCode}} {{lead.Contact.Town}}</span>
+                        </span>
+                      </div>
+                      <div ng-show="lead.Activity.IsScheduled">
+                        <span style="color: #28a54c" ng-hide="moment(lead.Activity.ScheduledDate).isAfter(moment())">{{lead.Contact.FirstName}} {{lead.Contact.LastName}}</span>
+                        <span style="color: #00ACE9" ng-show="moment(lead.Activity.ScheduledDate).isAfter(moment())">{{lead.Contact.FirstName}} {{lead.Contact.LastName}}</span><br />
+                        <span ng-show="lead.Activity.ScheduledNote">{{lead.Activity.ScheduledNote}}<br /></span>
+                        <span ng-show="lead.Contact.MobilePhoneNumber">{{lead.Contact.MobilePhoneNumber}}</span><span ng-show="lead.Contact.HousePhoneNumber && !lead.Contact.HousePhoneNumber">{{lead.Contact.HousePhoneNumber}}</span><span ng-show="lead.Contact.StreetName || lead.Contact.HouseNumber || lead.Contact.PostalCode || lead.Contact.Town">:</span>
+                        <span>
+                          <span ng-show="lead.Contact.StreetName || lead.Contact.HouseNumber">{{lead.Contact.StreetName}} {{lead.Contact.HouseNumber}}</span><span ng-show="(lead.Contact.StreetName || lead.Contact.HouseNumber) && (lead.Contact.PostalCode || lead.Contact.Town)">,</span>
+                          <span ng-show="lead.Contact.PostalCode || lead.Contact.Town">{{lead.Contact.PostalCode}} {{lead.Contact.Town}}</span>
+                        </span>
+                        <br  />
+                        <strong>
+                          <span ng-show="lead.Activity.AssignedTo !== user.staffCode">Řeší: <em>{{lead.Activity.AssignedTo | leadAssignedTo}}</em> do</span>
+                          <span ng-show="lead.Activity.AssignedTo === user.staffCode">Vyřešit do</span>
+                          {{lead.Activity.ScheduledFor | leadDate}}
+                        </strong>
+                      </div>
+                    </div>
+                    <div style="font-size: smaller; text-align: center; color: #aaa" ng-show="leadShowAll" ng-click="leadDoShowAll()"><i>zobrazit více</i></div>
+                </div>
+            </div>
             <div lass="list card" ng-show="comm.weekId > 0 && !commDetail.show" ng-click="showCommDetail()">
                 <div class="item item-divider item-positive">Provize na týden {{comm.weekId.toString() | weekId}}</div>
                 <div class="item item-body">
@@ -83,7 +116,7 @@
                 </div>
             </div>
             <div style="font-size: smaller; text-align: center; color: #aaa" ng-click="doRefresh()"><i>aktualizováno {{lastUpdate}}</i></div>
-            <div style="font-size: smaller; text-align: center; color: #aaa"><i>OZ Cockpit (CZ, 2017/01, rev. 3)</i></div>
+            <div style="font-size: smaller; text-align: center; color: #aaa"><i>OZ Cockpit (CZ, 2017/02, rev. 2, build 100)</i></div>
         </div>
     </ion-content>
     <ion-content class="padding background" ng-show="user.uniqueId === null" scroll="false">

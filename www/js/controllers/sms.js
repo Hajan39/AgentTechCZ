@@ -1,6 +1,6 @@
 angular.module('cockpit.controllers')
 
-.controller('SaleCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics, PRODUCTS, UserData) {
+.controller('SaleCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics, PRODUCTS, UserData, $stateParams, CockpitData) {
   var validatePin = function(pin) {
     try {
       var pin = pin.toString();
@@ -78,6 +78,11 @@ angular.module('cockpit.controllers')
       ref: 'n'
   };
 
+  if ($stateParams.pin !== undefined && $stateParams.pin !== '1') {
+    $scope.sc.pin = parseInt($stateParams.pin);
+  }
+  $scope.sc.date = new Date()
+
   var doUpdateView = function(ref) {
     $scope.catList = [];
     $scope.termList = [];
@@ -101,8 +106,22 @@ angular.module('cockpit.controllers')
     doUpdateView($scope.sc.ref == 'a' ? 'n' : 'a');
   };
   $scope.updateView();
+  $scope.loans = [
+    {id: 1, code: 'NC'},
+    {id: 2, code: 'OBN'},
+    {id: 3, code: 'REF'},
+    {id: 4, code: 'SUB'}
+  ]
+  var doLead = function(leadId, loanId, issueValue) {
+    CockpitData.leadPayOut(leadId, 403, loanId, issueValue).then(function (result) {
+
+    }, function () { });
+  }
 
   $scope.payMt = function(data) {
+    if ($stateParams.lid !== '1') {
+      doLead(parseInt($stateParams.lid), data.loanId, data.issueValue);
+    }
       $ionicLoading.show();
       $scope.updateView();
       console.log(data);
@@ -195,6 +214,10 @@ angular.module('cockpit.controllers')
     };
 
   $scope.payHc = function(data) {
+    if ($stateParams.lid !== '1') {
+      console.log($stateParams);
+      doLead(parseInt($stateParams.lid), data.loanId, data.paidOutValue);
+    }
       $ionicLoading.show();
 
       if (data.pin == null || data.paidOutValue == null || data.date == null || data.term == null ) {
@@ -251,7 +274,8 @@ angular.module('cockpit.controllers')
     };
 })
 
-.controller('SmsScoringCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics) {
+.controller('SmsScoringCtrl', function($scope, $ionicLoading, $state, $cordovaSms, $ionicPopup, $cordovaGoogleAnalytics, $stateParams) {
+  console.log($stateParams);
   var validatePin = function(pin) {
     try {
       var pin = pin.toString();
@@ -392,6 +416,25 @@ angular.module('cockpit.controllers')
     {text: 'vyšší odborné', value: 'VO'},
     {text: 'vysokoškolské', value: 'VS'}
   ];
+
+  console.log($stateParams);
+  if ($stateParams.pin !== undefined) {
+    $scope.sc.pin = $stateParams.pin === '1' ? null : parseInt($stateParams.pin);
+  }
+  if ($stateParams.firstName !== undefined) {
+    $scope.sc.firstName = $stateParams.firstName === 'null' ? '' : $stateParams.firstName;
+  }
+  if ($stateParams.lastName !== undefined) {
+    $scope.sc.lastName = $stateParams.lastName === 'null' ? '' : $stateParams.lastName;
+  }
+  if ($stateParams.phone !== undefined) {
+    if ($stateParams.phone !== '1')
+      $scope.sc.phone = '420' + $stateParams.phone.substring($stateParams.phone.length - 9, $stateParams.phone.length);
+  }
+  if ($stateParams.lid !== undefined) {
+    if ($stateParams.lid !== '1')
+      $scope.sc.id = parseInt($stateParams.lid);
+  }
 
   var validate = function (arr) {
     var ret = true;

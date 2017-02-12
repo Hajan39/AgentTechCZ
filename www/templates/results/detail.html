@@ -7,7 +7,7 @@
       <div class="item" ng-repeat="row in brmModalData.reports" ng-click="brmModalClose()">
         {{row.name}}
         <div class="item-note item-right">
-          {{row.value}}
+          {{row.value | num}}
         </div>
       </div>
         <div class="item" ng-click="brmModalClose()">

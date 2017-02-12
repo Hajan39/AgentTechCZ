@@ -22,7 +22,7 @@ angular.module('cockpit.services')
 
   var that = {
     getUser: function() {
-      return getData('', 'user').then(function (result) {
+      return getData('api', 'user').then(function (result) {
         if (result.code != 'OK') {
           return null;
         }
@@ -30,6 +30,7 @@ angular.module('cockpit.services')
         var position = result.data.position;
         position.role = position.positionCode === 4 ? "BR" :
           (position.positionCode == 3 ? 'BL' : "AG");
+        position.staffCode = position.role === 'AG' ? position.agencyId : position.positionName
 
         return {
           position: position,
@@ -40,8 +41,79 @@ angular.module('cockpit.services')
       });
     },
 
+    getLeads: function(limit) {
+      return getData('lead', 'leads').then(function (result) {
+        if (result.code !== 'OK') return null;
+        var leads = result.data;
+        return leads;
+      })
+    },
+    getLeadPhoneNumber: function() {
+      return UserData.getPhone();
+    },
+    getLeadClosedStatuses: function() {
+      return getData('lead/closed-statuses').then(function (result) {
+        if (result.code !== 'OK') return null;
+        return result.data.map(function (state) {
+          return {value: state.LeadStatusId, text1: state.LeadStatusName1, text2: state.LeadStatusName2};
+        });
+      })
+    },
+    getLeadSubs: function() {
+      return getData('staff/all').then(function (result) {
+        if (result.code !== 'OK') return null;
+        return result.data;
+      })
+    },
+    getLeadBrms: function() {
+      return getData('staff').then(function (result) {
+        if (result.code !== 'OK') return null;
+        return result.data;
+      })
+    },
+    leadClose: function(processId, statusId, note) {
+      return $q(function (resolve, reject) {
+        UserData.post('lead/' + processId + '/close?statusId=' + statusId + '&note=' + encodeURIComponent(note), {}).then(function (result) {
+          if (result.code === 'OK') resolve();
+          else reject();
+        }).catch(function () {
+          reject();
+        });
+      });
+    },
+    leadSchedule: function(processId, assignedTo, date, note) {
+      return $q(function (resolve, reject) {
+        UserData.post('lead/' + processId + '/schedule?targetStaff=' + encodeURIComponent(assignedTo) + '&scheduleDate=' + date.toUTCString() + '&note=' + encodeURIComponent(note), {}).then(function (result) {
+          if (result.code === 'OK' && result.data) resolve();
+          else reject();
+        }).catch(function () {
+          reject();
+        });
+      });
+    },
+    leadTransfer: function(processId, assignedTo, note) {
+      return $q(function (resolve, reject) {
+        UserData.post('lead/' + processId + '/transfer?targetStaff=' + encodeURIComponent(assignedTo) + '&note=' + encodeURIComponent(note), {}).then(function (result) {
+          if (result.code === 'OK') resolve();
+          else reject();
+        }).catch(function () {
+          reject();
+        });
+      });
+    },
+    leadPayOut: function(processId, productId, loanId, issueValue) {
+      return $q(function (resolve, reject) {
+        UserData.post('lead/' + processId + '/payout?note=&productId=' + productId +'&loanId=' + loanId + '&issueValue=' + issueValue).then(function(result) {
+          if (result.code === 'OK') resolve();
+          else reject();
+        }).catch(function () {
+          reject();
+        });
+      })
+    },
+
     getReports: function() {
-      return getData('reports', 'reports').then(function (result) {
+      return getData('report', 'reports').then(function (result) {
         var reports = result.data.plan;
         return {
           plans: [
@@ -71,7 +143,7 @@ angular.module('cockpit.services')
 
     sendReports: function () {
       return $q(function (resolve, reject) {
-        UserData.post('reports', {}).then(function (result) {
+        UserData.post('report', {}).then(function (result) {
           if (result.data.result == 0) {
             resolve();
           } else {
@@ -85,7 +157,7 @@ angular.module('cockpit.services')
 
     getParamReports: function(paramName) {
       if (paramName == 'Výběry') paramName = 'coll';
-      return getData('reports/' + paramName.replace('+', '_')).then(function (result) {
+      return getData('report/' + paramName.replace('+', '_')).then(function (result) {
         if (result.code !== 'OK') return [];
 
         if (paramName == '5+' || paramName == '5=' || paramName == '8=' || paramName == '12+' || paramName == '12'
@@ -105,7 +177,7 @@ angular.module('cockpit.services')
     },
 
     getStats: function () {
-      return getData('stats', 'stats').then(function (result) {
+      return getData('target', 'stats').then(function (result) {
         if (result.code != 'OK') {
           return {plans: [], month: null};
         }
@@ -131,7 +203,7 @@ angular.module('cockpit.services')
     },
 
     getSubStats: function (id) {
-      return getData('stats/' + id).then(function (result) {
+      return getData('target/' + id).then(function (result) {
         return getData('comm?repId=' + id).then(function (commResult) {
           if (result.code != 'OK' || commResult.code != 'OK') {
             return {plans: [], month: null, comm: {weekId: 0}};
@@ -199,13 +271,16 @@ angular.module('cockpit.services')
 
       return $q(function (resolve) {
         that.getUser().then(function (userData) {
-          that.getStats().then(function (statsData) {
-            that.getAgentCommission().then(function (commData) {
-              resolve({
-                user: userData,
-                stats: statsData,
-                comm: commData
-              });
+          that.getLeads().then(function (leads) {
+            that.getStats().then(function (statsData) {
+              that.getAgentCommission().then(function (commData) {
+                resolve({
+                  user: userData,
+                  stats: statsData,
+                  comm: commData,
+                  leads: leads
+                });
+              })
             })
           });
         });
@@ -213,7 +288,7 @@ angular.module('cockpit.services')
     },
 
     softRefresh: function() {
-      return UserData.get('/').then(function (result) {
+      return UserData.get('/api/').then(function (result) {
         if (result.code == 'OK') {
           return that.refresh();
         } else {

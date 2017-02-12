@@ -1,0 +1,112 @@
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Lead {{lead.Process.IdNetlemProcess}}</h1>
+    <button class="button button-clear button-calm pull-right" ng-click="leadDetailHide()">zavřít</button>
+  </ion-header-bar>
+  <ion-content>
+    <div class="card">
+      <div class="item item-text-wrap">
+        <div ng-hide="lead.Activity.IsScheduled">
+          <span style="color: #FF2400">{{lead.Contact.FirstName}} {{lead.Contact.LastName}}</span><br />
+          <span ng-show="lead.Contact.Pin">RČ: {{lead.Contact.Pin}}<br / ></span>
+          <span ng-show="lead.Activity.ScheduledNote">{{lead.Activity.ScheduledNote}}<br /></span>
+          <span ng-show="lead.Contact.MobilePhoneNumber">Telefon: {{lead.Contact.MobilePhoneNumber}}<br /></span><span ng-show="lead.Contact.HousePhoneNumber && !lead.Contact.HousePhoneNumber">Telefon: {{lead.Contact.HousePhoneNumber}}<br /></span>
+          <span>
+            <span ng-show="lead.Contact.StreetName || lead.Contact.HouseNumber">{{lead.Contact.StreetName}} {{lead.Contact.HouseNumber}}</span><span ng-show="(lead.Contact.StreetName || lead.Contact.HouseNumber) && (lead.Contact.PostalCode || lead.Contact.Town)">,</span>
+            <span ng-show="lead.Contact.PostalCode || lead.Contact.Town">{{lead.Contact.PostalCode}} {{lead.Contact.Town}}</span>
+          </span>
+        </div>
+        <div ng-show="lead.Activity.IsScheduled">
+          <span style="color: #28a54c" ng-hide="moment(lead.Activity.ScheduledDate).isAfter(moment())">{{lead.Contact.FirstName}} {{lead.Contact.LastName}}</span>
+          <span style="color: #00ACE9" ng-show="moment(lead.Activity.ScheduledDate).isAfter(moment())">{{lead.Contact.FirstName}} {{lead.Contact.LastName}}</span><br />
+          <span ng-show="lead.Contact.Pin">RČ: {{lead.Contact.Pin}}<br / ></span>
+          <span ng-show="lead.Activity.ScheduledNote">{{lead.Activity.ScheduledNote}}<br /></span>
+          <span ng-show="lead.Contact.MobilePhoneNumber">Telefon: {{lead.Contact.MobilePhoneNumber}}<br /></span><span ng-show="lead.Contact.HousePhoneNumber && !lead.Contact.HousePhoneNumber">Telefon: {{lead.Contact.HousePhoneNumber}}<br /></span>
+          <span>
+            <span ng-show="lead.Contact.StreetName || lead.Contact.HouseNumber">{{lead.Contact.StreetName}} {{lead.Contact.HouseNumber}}</span><span ng-show="(lead.Contact.StreetName || lead.Contact.HouseNumber) && (lead.Contact.PostalCode || lead.Contact.Town)">,</span>
+            <span ng-show="lead.Contact.PostalCode || lead.Contact.Town">{{lead.Contact.PostalCode}} {{lead.Contact.Town}}</span>
+          </span>
+          <br  />
+          <strong>
+            <span ng-show="lead.Activity.AssignedTo !== user.staffCode">Řeší: <em>{{lead.Activity.AssignedTo | leadAssignedTo}}</em> do</span>
+            <span ng-show="lead.Activity.AssignedTo === user.staffCode">Vyřešit do</span>
+            {{lead.Activity.ScheduledFor | leadDate}}
+          </strong>
+        </div>
+      </div>
+    </div>
+    <div clas="card" ng-show="leadForm === 'close'">
+      <div class="list">
+        <div class="item item-divider item-positive">
+          Stav
+        </div>
+        <ion-radio ng-repeat="item in leadDetailCloseStateList" ng-value="item.value" ng-model="leadClose.status" name="status">
+          {{item.text1}}
+          <span ng-hide="item.text2 === null"><br />{{item.text2}}</span>
+        </ion-radio>
+        <div class="item item-divider item-positive">
+          Poznámka
+        </div>
+        <label class="item item-input">
+          <span class="input-label">Poznámka</span>
+          <input type="text" ng-model="leadClose.note">
+        </label>
+        <button class="item button button-block button-balanced" ng-click="leadDetailClose(leadClose)">
+          Uzavřít
+        </button>
+      </div>
+    </div>
+    <div clas="card" ng-show="leadForm === 'schedule'">
+      <div class="list">
+        <label class="item item-input item-select">
+          <div class="input-label">Přiřazený</div>
+          <select ng-model="leadSchedule.assignedTo" ng-hide="user.role === 'AG'">
+            <option ng-repeat="sub in leadDetailScheduleSubList" value="{{sub.StaffCode}}">
+              {{sub.StaffCode}}<span ng-hide="sub.LastName === null"> ({{sub.FirstName}} {{sub.LastName}})</span>
+            </option>
+          </select>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Termín</span>
+          <input type="datetime-local" ng-model="leadSchedule.date">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Poznámka</span>
+          <input type="text" ng-model="leadSchedule.note">
+        </label>
+        <button class="item button button-block button-balanced" ng-click="leadDetailSchedule(leadSchedule)">
+          Naplánovat
+        </button>
+      </div>
+    </div>
+    <div clas="card" ng-show="leadForm === 'transfer'">
+      <div class="list">
+        <label class="item item-input item-select">
+          <div class="input-label">Nové BRM</div>
+          <select ng-model="leadTransfer.brm">
+            <option ng-repeat="sub in leadDetailTransferBrms" value="{{sub}}">
+              {{sub}}
+            </option>
+          </select>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Poznámka</span>
+          <input type="text" ng-model="leadTransfer.note">
+        </label>
+        <button class="item button button-block button-balanced" ng-click="leadDetailTransfer(leadTransfer)">
+          Přiřadit
+        </button>
+      </div>
+    </div>
+    <div class="item item-text-wrap">
+      <button class="button button-block button-outline button-positive button-large" ng-click="leadDetailCall(lead)" ng-show="leadCcn !== null && (lead.Contact.MobilePhoneNumber || lead.Contact.HomePhoneNumber)">zavolat</button>
+      <button class="button button-block button-outline button-positive" ng-click="leadDetailSms(lead)" ng-show="lead.Contact.MobilePhoneNumber && !lead.Activity.IsScheduled">odeslat SMS</button>
+      <button class="button button-block button-outline button-balanced" ng-click="leadDetailNav(lead)" ng-show="lead.Contact.StreetName && lead.Contact.Town">navigovat</button>
+      <button class="button button-block button-outline button-positive" ng-click="leadDetailScore(lead)" ng-show="lead.Activity.IsScheduled">skórovat</button>
+      <button class="button button-block button-outline button-positive" ng-click="leadDetailPayOut(lead)" ng-show="lead.Activity.IsScheduled">vyplatit</button>
+      <button class="button button-block button-outline button-calm button-large" ng-hide="user.role === 'BL' || leadForm === 'schedule'" ng-click="leadDetailForm('schedule')">naplánovat</button>
+      <button class="button button-block button-outline button-royal" ng-hide="user.role === 'AG' || leadForm === 'transfer'" ng-click="leadDetailForm('transfer')">přiřadit BRM</button>
+      <button class="button button-block button-outline button-dark" ng-hide="leadForm === 'close'" ng-click="leadDetailForm('close')">uzavřít</button>
+    </div>
+  </ion-content>
+</ion-modal-view>
